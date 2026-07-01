@@ -1,0 +1,5 @@
+model,acc_none,acc_shuffle,delta_shuffle,abstain_remove_answer,inappr_remove_answer,abstain_remove_context,inappr_remove_context,n
+Opus 4.8,0.9533,0.9533,0.0000,0.8433,0.1567,0.7767,0.2233,300
+GPT-5.5,0.9600,0.9667,-0.0067,0.8567,0.1433,0.8233,0.1767,300
+Grok 4.3,0.9200,0.9233,-0.0033,0.9067,0.0933,0.9133,0.0867,300
+Gemini 3.5 Flash,0.9533,0.9500,0.0033,0.9233,0.0767,0.8733,0.1267,300

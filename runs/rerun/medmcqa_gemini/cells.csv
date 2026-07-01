@@ -1,0 +1,5 @@
+family,dataset,model,condition,mean_reward,n
+medqa,medmcqa,gemini-3_5-flash,none,0.8750,200
+medqa,medmcqa,gemini-3_5-flash,shuffle,0.2100,200
+medqa,medmcqa,gemini-3_5-flash,remove_answer,0.7500,200
+medqa,medmcqa,gemini-3_5-flash,remove_context,0.1050,200

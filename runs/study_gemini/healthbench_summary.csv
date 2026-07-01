@@ -1,0 +1,2 @@
+model,hb_baseline_score,hb_probe_appropriate_uncertainty,hb_inappropriate_confident_rate
+gemini-3_5-flash,0.0000,0.7400,0.2600

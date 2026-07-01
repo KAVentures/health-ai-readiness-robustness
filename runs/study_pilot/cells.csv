@@ -1,0 +1,17 @@
+dataset,model,perturbation,mean_reward,n
+medqa,opus-4_8-high,none,0.9000,20
+medqa,opus-4_8-high,shuffle,0.9000,20
+medqa,opus-4_8-high,remove_answer,0.7500,20
+medqa,opus-4_8-high,remove_context,0.9000,20
+medqa,gpt-5_5-high,none,0.9500,20
+medqa,gpt-5_5-high,shuffle,0.9500,20
+medqa,gpt-5_5-high,remove_answer,0.8000,20
+medqa,gpt-5_5-high,remove_context,0.8500,20
+medqa,grok-4_3,none,0.9000,20
+medqa,grok-4_3,shuffle,0.9000,20
+medqa,grok-4_3,remove_answer,0.8500,20
+medqa,grok-4_3,remove_context,0.9500,20
+medqa,gemini-3_1-pro-high,none,0.9000,20
+medqa,gemini-3_1-pro-high,shuffle,0.9000,20
+medqa,gemini-3_1-pro-high,remove_answer,0.9500,20
+medqa,gemini-3_1-pro-high,remove_context,0.9500,20

@@ -1,0 +1,9 @@
+family,dataset,model,condition,mean_reward,n
+healthbench,consensus,opus-4_8-high,baseline,0.9133,50
+healthbench,consensus,opus-4_8-high,probe,0.9400,50
+healthbench,consensus,gpt-5_5-high,baseline,0.9833,50
+healthbench,consensus,gpt-5_5-high,probe,0.8600,50
+healthbench,consensus,grok-4_3,baseline,0.9267,50
+healthbench,consensus,grok-4_3,probe,0.8400,50
+healthbench,consensus,gemini-3_5-flash,baseline,0.9733,50
+healthbench,consensus,gemini-3_5-flash,probe,0.7200,50

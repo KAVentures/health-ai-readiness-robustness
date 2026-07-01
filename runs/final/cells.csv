@@ -1,0 +1,17 @@
+dataset,model,condition,mean_reward
+medqa,opus-4_8-high,none,0.9200
+medqa,opus-4_8-high,shuffle,0.9200
+medqa,opus-4_8-high,remove_answer,0.8200
+medqa,opus-4_8-high,remove_context,0.8000
+medqa,gpt-5_5-high,none,0.9400
+medqa,gpt-5_5-high,shuffle,0.9800
+medqa,gpt-5_5-high,remove_answer,0.8800
+medqa,gpt-5_5-high,remove_context,0.8300
+medqa,grok-4_3,none,0.9600
+medqa,grok-4_3,shuffle,0.9500
+medqa,grok-4_3,remove_answer,0.8900
+medqa,grok-4_3,remove_context,0.9000
+medqa,gemini-3_5-flash,none,0.9600
+medqa,gemini-3_5-flash,shuffle,0.9600
+medqa,gemini-3_5-flash,remove_answer,0.9400
+medqa,gemini-3_5-flash,remove_context,0.8500

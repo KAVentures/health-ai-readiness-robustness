@@ -1,0 +1,27 @@
+[project]
+name = "healthbench_robust"
+version = "0.1.0"
+description = "Open-ended context-removal robustness probe over HealthBench"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "datasets>=4.0.0",
+    "verifiers>=0.1.12,<0.2",
+    "medarc-verifiers>=0.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+include = ["healthbench_robust.py"]
+
+[tool.prime.environment]
+loader = "healthbench_robust:load_environment"
+display_name = "HealthBench-Robust"
+visibility = "PRIVATE"
+
+[tool.verifiers.eval]
+num_examples = -1
+rollouts_per_example = 1

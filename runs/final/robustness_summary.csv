@@ -1,0 +1,5 @@
+dataset,model,acc_baseline,acc_shuffle,delta_acc_shuffle,inappropriate_rate_remove_answer,inappropriate_rate_remove_context
+medqa,opus-4_8-high,0.9200,0.9200,0.0000,0.1800,0.2000
+medqa,gpt-5_5-high,0.9400,0.9800,-0.0400,0.1200,0.1700
+medqa,grok-4_3,0.9600,0.9500,0.0100,0.1100,0.1000
+medqa,gemini-3_5-flash,0.9600,0.9600,0.0000,0.0600,0.1500

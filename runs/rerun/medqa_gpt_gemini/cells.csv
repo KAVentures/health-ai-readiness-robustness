@@ -1,0 +1,5 @@
+family,dataset,model,condition,mean_reward,n
+medqa,medqa,gpt-5_5-high,remove_answer,0.8567,300
+medqa,medqa,gpt-5_5-high,remove_context,0.8233,300
+medqa,medqa,gemini-3_5-flash,remove_answer,0.0100,300
+medqa,medqa,gemini-3_5-flash,remove_context,0.0000,300

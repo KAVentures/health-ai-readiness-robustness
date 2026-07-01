@@ -1,0 +1,45 @@
+# Robustness-study endpoint registry: 4 frontier reasoning models, high reasoning.
+# Keys are read from env var NAMES (loaded from .env). No secrets in this file.
+
+[[endpoint]]
+endpoint_id = "gpt-5_5-high"
+model = "gpt-5.5"
+api_client_type = "openai_responses"
+key = "OPENAI_API_KEY"
+
+[endpoint.sampling_args]
+reasoning_effort = "high"
+
+
+[[endpoint]]
+endpoint_id = "opus-4_8-high"
+model = "claude-opus-4-8"
+api_client_type = "anthropic_messages"
+url = "https://api.anthropic.com"
+key = "ANTHROPIC_API_KEY"
+
+[endpoint.sampling_args]
+max_tokens = 32000
+
+[endpoint.sampling_args.extra_body.thinking]
+type = "enabled"
+budget_tokens = 16000
+
+
+[[endpoint]]
+endpoint_id = "grok-4_3"
+model = "grok-4.3"
+api_client_type = "openai_chat_completions"
+url = "https://api.x.ai/v1"
+key = "XAI_API_KEY"
+
+
+[[endpoint]]
+endpoint_id = "gemini-3_5-flash"
+model = "gemini-3.5-flash"
+api_client_type = "openai_chat_completions"
+url = "https://generativelanguage.googleapis.com/v1beta/openai"
+key = "GOOGLE_API_KEY"
+
+[endpoint.sampling_args]
+reasoning_effort = "high"

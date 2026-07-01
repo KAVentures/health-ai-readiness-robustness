@@ -1,0 +1,49 @@
+diff --git a/medarc_verifiers/utils/judge_helpers.py b/medarc_verifiers/utils/judge_helpers.py
+index 10f703b..1881902 100644
+--- a/medarc_verifiers/utils/judge_helpers.py
++++ b/medarc_verifiers/utils/judge_helpers.py
+@@ -69,6 +69,11 @@ _JUDGE_DEFAULTS: Iterable[JudgeSamplingDefaults] = (
+         name=("claude-4.0", "claude-4.5"),
+         temperature=0.5,
+     ),
++    JudgeSamplingDefaults(
++        # Opus/Sonnet/Haiku 4.x reached via Anthropic's OpenAI-compatible endpoint,
++        # which rejects `temperature` for these models; send no sampling overrides.
++        name=("claude-opus-4", "claude-sonnet-4", "claude-haiku-4"),
++    ),
+     JudgeSamplingDefaults(
+         name="deepseek-r1",
+         temperature=0.6,
+@@ -87,6 +92,14 @@ _JUDGE_DEFAULTS: Iterable[JudgeSamplingDefaults] = (
+         reasoning_effort="low",  # TODO: support responses api reasoning effort when verifiers adds suport for it
+         frozen_temperature=True,
+     ),
++    JudgeSamplingDefaults(
++        # Gemini 3.5 via Google's OpenAI-compatible endpoint, which rejects `top_k`
++        # (and we drop `top_p` for the same compatibility reason).
++        name="gemini-3.5",
++        temperature=1.0,
++        reasoning_effort="low",
++        frozen_temperature=True,
++    ),
+     JudgeSamplingDefaults(
+         name="glm-4.5",
+         temperature=0.6,
+@@ -104,7 +117,7 @@ _JUDGE_DEFAULTS: Iterable[JudgeSamplingDefaults] = (
+         top_p=1.0,
+     ),
+     JudgeSamplingDefaults(
+-        name=("gpt-5", "gpt-5.1", "gpt-5.2"),
++        name=("gpt-5", "gpt-5.1", "gpt-5.2", "gpt-5.5"),
+         temperature=1.0,
+         reasoning_effort="low",  # TODO: support responses api reasoning effort when verifiers adds suport for it
+         frozen_temperature=True,
+@@ -118,7 +131,7 @@ _JUDGE_DEFAULTS: Iterable[JudgeSamplingDefaults] = (
+         frozen_temperature=True,
+     ),
+     JudgeSamplingDefaults(
+-        name=("grok-4", "grok-4.1"),
++        name=("grok-4", "grok-4.1", "grok-4.3"),
+         temperature=0.2,
+     ),
+     JudgeSamplingDefaults(

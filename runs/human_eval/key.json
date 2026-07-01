@@ -1,0 +1,302 @@
+{
+  "A001": {
+    "subject_model": "opus-4_8-high",
+    "item": 23,
+    "prompt_id": "b7a82324-73ee-4996-8f71-8f455f789e90",
+    "gpt55_saved_vote": 1
+  },
+  "A002": {
+    "subject_model": "gpt-5_5-high",
+    "item": 30,
+    "prompt_id": "779b5d14-1a6f-4d0a-8763-e0a25961a811",
+    "gpt55_saved_vote": 1
+  },
+  "A003": {
+    "subject_model": "opus-4_8-high",
+    "item": 11,
+    "prompt_id": "c5bf7fc3-dfb0-4b47-9bbe-222e87b952e2",
+    "gpt55_saved_vote": 1
+  },
+  "A004": {
+    "subject_model": "grok-4_3",
+    "item": 21,
+    "prompt_id": "c80a2a84-281d-41cc-a10b-32ee48c584f6",
+    "gpt55_saved_vote": 1
+  },
+  "A005": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 48,
+    "prompt_id": "620b9bf1-f0f3-4d68-aa74-1560fb406a68",
+    "gpt55_saved_vote": 0
+  },
+  "A006": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 4,
+    "prompt_id": "5a6e4a41-3ea6-4050-a971-93433fe34877",
+    "gpt55_saved_vote": 1
+  },
+  "A007": {
+    "subject_model": "grok-4_3",
+    "item": 1,
+    "prompt_id": "6f7a2ee9-e9c6-42d8-b79f-22dea966b8d2",
+    "gpt55_saved_vote": 1
+  },
+  "A008": {
+    "subject_model": "gpt-5_5-high",
+    "item": 8,
+    "prompt_id": "85408180-238e-4c1b-92c1-55d8ce6c3717",
+    "gpt55_saved_vote": 1
+  },
+  "A009": {
+    "subject_model": "gpt-5_5-high",
+    "item": 23,
+    "prompt_id": "b7a82324-73ee-4996-8f71-8f455f789e90",
+    "gpt55_saved_vote": 0
+  },
+  "A010": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 22,
+    "prompt_id": "bf7718f2-bceb-4702-8d74-a7fc1bd7fb78",
+    "gpt55_saved_vote": 1
+  },
+  "A011": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 43,
+    "prompt_id": "d984a2a8-1209-42bb-8f59-001421c96f8f",
+    "gpt55_saved_vote": 1
+  },
+  "A012": {
+    "subject_model": "opus-4_8-high",
+    "item": 7,
+    "prompt_id": "f05491d8-d160-4b2b-bd5b-59d757585e39",
+    "gpt55_saved_vote": 1
+  },
+  "A013": {
+    "subject_model": "grok-4_3",
+    "item": 12,
+    "prompt_id": "7a4548e6-38b7-48dd-9088-d7d1219f7852",
+    "gpt55_saved_vote": 1
+  },
+  "A014": {
+    "subject_model": "grok-4_3",
+    "item": 24,
+    "prompt_id": "6c568ea6-86bd-4286-94ba-e3ccc8b67b21",
+    "gpt55_saved_vote": 1
+  },
+  "A015": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 37,
+    "prompt_id": "8e447490-23cd-4d64-9e3a-b8ad46c76573",
+    "gpt55_saved_vote": 0
+  },
+  "A016": {
+    "subject_model": "opus-4_8-high",
+    "item": 42,
+    "prompt_id": "e690c779-3cb8-4271-8541-a699bb1bd475",
+    "gpt55_saved_vote": 1
+  },
+  "A017": {
+    "subject_model": "gpt-5_5-high",
+    "item": 19,
+    "prompt_id": "e2cd9f23-e3dd-4b67-8984-a5412dd802e5",
+    "gpt55_saved_vote": 1
+  },
+  "A018": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 1,
+    "prompt_id": "6f7a2ee9-e9c6-42d8-b79f-22dea966b8d2",
+    "gpt55_saved_vote": 1
+  },
+  "A019": {
+    "subject_model": "opus-4_8-high",
+    "item": 25,
+    "prompt_id": "c653b6eb-f9b9-4626-b702-ff73d71e8253",
+    "gpt55_saved_vote": 1
+  },
+  "A020": {
+    "subject_model": "opus-4_8-high",
+    "item": 22,
+    "prompt_id": "bf7718f2-bceb-4702-8d74-a7fc1bd7fb78",
+    "gpt55_saved_vote": 1
+  },
+  "A021": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 9,
+    "prompt_id": "ecd7453e-1dc1-4e52-bb95-67e8e5788573",
+    "gpt55_saved_vote": 1
+  },
+  "A022": {
+    "subject_model": "gpt-5_5-high",
+    "item": 37,
+    "prompt_id": "8e447490-23cd-4d64-9e3a-b8ad46c76573",
+    "gpt55_saved_vote": 1
+  },
+  "A023": {
+    "subject_model": "gpt-5_5-high",
+    "item": 44,
+    "prompt_id": "5caa2d1f-3ab9-4e25-97a2-af29c2dbbcfb",
+    "gpt55_saved_vote": 1
+  },
+  "A024": {
+    "subject_model": "grok-4_3",
+    "item": 38,
+    "prompt_id": "762d9eca-4835-4447-a649-f91740c74bd0",
+    "gpt55_saved_vote": 1
+  },
+  "A025": {
+    "subject_model": "opus-4_8-high",
+    "item": 47,
+    "prompt_id": "ff514fc4-bd34-4a3f-be3f-840b0e1f8091",
+    "gpt55_saved_vote": 1
+  },
+  "A026": {
+    "subject_model": "grok-4_3",
+    "item": 11,
+    "prompt_id": "c5bf7fc3-dfb0-4b47-9bbe-222e87b952e2",
+    "gpt55_saved_vote": 1
+  },
+  "A027": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 31,
+    "prompt_id": "62b4d946-e447-4fb4-96ed-b6d36c8e2c62",
+    "gpt55_saved_vote": 1
+  },
+  "A028": {
+    "subject_model": "gpt-5_5-high",
+    "item": 34,
+    "prompt_id": "b947fc6f-1d50-4e3f-b679-8484529b787b",
+    "gpt55_saved_vote": 1
+  },
+  "A029": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 27,
+    "prompt_id": "af62e0b8-bbd0-4dcc-b55c-cb4c7bbcfb2c",
+    "gpt55_saved_vote": 1
+  },
+  "A030": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 36,
+    "prompt_id": "9ab66439-8090-4f6c-ba74-874591dfd1a6",
+    "gpt55_saved_vote": 1
+  },
+  "A031": {
+    "subject_model": "grok-4_3",
+    "item": 37,
+    "prompt_id": "8e447490-23cd-4d64-9e3a-b8ad46c76573",
+    "gpt55_saved_vote": 0
+  },
+  "A032": {
+    "subject_model": "gpt-5_5-high",
+    "item": 9,
+    "prompt_id": "ecd7453e-1dc1-4e52-bb95-67e8e5788573",
+    "gpt55_saved_vote": 1
+  },
+  "A033": {
+    "subject_model": "grok-4_3",
+    "item": 23,
+    "prompt_id": "b7a82324-73ee-4996-8f71-8f455f789e90",
+    "gpt55_saved_vote": 0
+  },
+  "A034": {
+    "subject_model": "gpt-5_5-high",
+    "item": 7,
+    "prompt_id": "f05491d8-d160-4b2b-bd5b-59d757585e39",
+    "gpt55_saved_vote": 1
+  },
+  "A035": {
+    "subject_model": "grok-4_3",
+    "item": 39,
+    "prompt_id": "5c1cf475-6fff-42e2-8508-7e1a14ea9f65",
+    "gpt55_saved_vote": 1
+  },
+  "A036": {
+    "subject_model": "gpt-5_5-high",
+    "item": 14,
+    "prompt_id": "b6eb69cb-b911-4c81-a7a1-357d21d27109",
+    "gpt55_saved_vote": 0
+  },
+  "A037": {
+    "subject_model": "opus-4_8-high",
+    "item": 43,
+    "prompt_id": "d984a2a8-1209-42bb-8f59-001421c96f8f",
+    "gpt55_saved_vote": 1
+  },
+  "A038": {
+    "subject_model": "opus-4_8-high",
+    "item": 46,
+    "prompt_id": "b267896f-cfc0-4bbe-9fda-fdfa287d1f43",
+    "gpt55_saved_vote": 1
+  },
+  "A039": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 10,
+    "prompt_id": "0e073591-b3e7-4dc8-94d0-dc5aa93ca35c",
+    "gpt55_saved_vote": 1
+  },
+  "A040": {
+    "subject_model": "opus-4_8-high",
+    "item": 39,
+    "prompt_id": "5c1cf475-6fff-42e2-8508-7e1a14ea9f65",
+    "gpt55_saved_vote": 1
+  },
+  "A041": {
+    "subject_model": "grok-4_3",
+    "item": 8,
+    "prompt_id": "85408180-238e-4c1b-92c1-55d8ce6c3717",
+    "gpt55_saved_vote": 1
+  },
+  "A042": {
+    "subject_model": "gpt-5_5-high",
+    "item": 13,
+    "prompt_id": "6a97773b-c33c-4f2e-9ac3-fdd53de0f175",
+    "gpt55_saved_vote": 0
+  },
+  "A043": {
+    "subject_model": "grok-4_3",
+    "item": 19,
+    "prompt_id": "e2cd9f23-e3dd-4b67-8984-a5412dd802e5",
+    "gpt55_saved_vote": 1
+  },
+  "A044": {
+    "subject_model": "gpt-5_5-high",
+    "item": 16,
+    "prompt_id": "3bb4a735-ace7-4342-b7a5-0bae083e6f82",
+    "gpt55_saved_vote": 1
+  },
+  "A045": {
+    "subject_model": "opus-4_8-high",
+    "item": 6,
+    "prompt_id": "6d5f483c-3e86-456d-bfd5-4e28de699ae5",
+    "gpt55_saved_vote": 1
+  },
+  "A046": {
+    "subject_model": "gemini-3_5-flash",
+    "item": 42,
+    "prompt_id": "e690c779-3cb8-4271-8541-a699bb1bd475",
+    "gpt55_saved_vote": 1
+  },
+  "A047": {
+    "subject_model": "opus-4_8-high",
+    "item": 4,
+    "prompt_id": "5a6e4a41-3ea6-4050-a971-93433fe34877",
+    "gpt55_saved_vote": 0
+  },
+  "A048": {
+    "subject_model": "opus-4_8-high",
+    "item": 32,
+    "prompt_id": "d475913b-0b18-47e9-90b2-28449e1d6541",
+    "gpt55_saved_vote": 1
+  },
+  "A049": {
+    "subject_model": "grok-4_3",
+    "item": 48,
+    "prompt_id": "620b9bf1-f0f3-4d68-aa74-1560fb406a68",
+    "gpt55_saved_vote": 1
+  },
+  "A050": {
+    "subject_model": "gpt-5_5-high",
+    "item": 31,
+    "prompt_id": "62b4d946-e447-4fb4-96ed-b6d36c8e2c62",
+    "gpt55_saved_vote": 1
+  }
+}

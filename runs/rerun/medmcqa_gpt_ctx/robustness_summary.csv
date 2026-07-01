@@ -1,0 +1,2 @@
+dataset,model,acc_baseline,acc_shuffle,delta_acc_shuffle,abstain_rate_remove_answer,inappropriate_rate_remove_answer,abstain_rate_remove_context,inappropriate_rate_remove_context
+medmcqa,gpt-5_5-high,,,,,,0.1000,0.9000

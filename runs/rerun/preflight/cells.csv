@@ -1,0 +1,4 @@
+family,dataset,model,condition,mean_reward,n
+medqa,medqa,opus-4_8-high,none,1.0000,1
+medqa,medqa,gpt-5_5-high,none,1.0000,1
+medqa,medqa,gemini-3_5-flash,none,1.0000,1
