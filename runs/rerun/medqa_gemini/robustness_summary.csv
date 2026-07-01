@@ -1,0 +1,2 @@
+dataset,model,acc_baseline,acc_shuffle,delta_acc_shuffle,abstain_rate_remove_answer,inappropriate_rate_remove_answer,abstain_rate_remove_context,inappropriate_rate_remove_context
+medqa,gemini-3_5-flash,,,,0.9233,0.0767,0.8733,0.1267

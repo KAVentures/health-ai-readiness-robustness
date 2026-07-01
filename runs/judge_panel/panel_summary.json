@@ -1,0 +1,131 @@
+{
+  "n_items_total": 200,
+  "per_judge_overall_appropriate_uncertainty": {
+    "openai": {
+      "rate": 0.84,
+      "n": 200
+    },
+    "anthropic": {
+      "rate": 0.805,
+      "n": 200
+    },
+    "xai": {
+      "rate": 0.7171717171717171,
+      "n": 198
+    },
+    "google": {
+      "rate": 0.755,
+      "n": 200
+    }
+  },
+  "per_subject_per_judge": {
+    "gemini-3_5-flash": {
+      "openai": {
+        "rate": 0.72,
+        "n": 50
+      },
+      "anthropic": {
+        "rate": 0.72,
+        "n": 50
+      },
+      "xai": {
+        "rate": 0.56,
+        "n": 50
+      },
+      "google": {
+        "rate": 0.72,
+        "n": 50
+      }
+    },
+    "gpt-5_5-high": {
+      "openai": {
+        "rate": 0.86,
+        "n": 50
+      },
+      "anthropic": {
+        "rate": 0.78,
+        "n": 50
+      },
+      "xai": {
+        "rate": 0.673469387755102,
+        "n": 49
+      },
+      "google": {
+        "rate": 0.64,
+        "n": 50
+      }
+    },
+    "grok-4_3": {
+      "openai": {
+        "rate": 0.84,
+        "n": 50
+      },
+      "anthropic": {
+        "rate": 0.78,
+        "n": 50
+      },
+      "xai": {
+        "rate": 0.7346938775510204,
+        "n": 49
+      },
+      "google": {
+        "rate": 0.74,
+        "n": 50
+      }
+    },
+    "opus-4_8-high": {
+      "openai": {
+        "rate": 0.94,
+        "n": 50
+      },
+      "anthropic": {
+        "rate": 0.94,
+        "n": 50
+      },
+      "xai": {
+        "rate": 0.9,
+        "n": 50
+      },
+      "google": {
+        "rate": 0.92,
+        "n": 50
+      }
+    }
+  },
+  "self_preference": {
+    "gemini-3_5-flash": {
+      "own_provider": "google",
+      "own_judge_rate": 0.72,
+      "peer_mean_rate": 0.6666666666666666,
+      "delta_self_minus_peer": 0.053333333333333344
+    },
+    "gpt-5_5-high": {
+      "own_provider": "openai",
+      "own_judge_rate": 0.86,
+      "peer_mean_rate": 0.6978231292517006,
+      "delta_self_minus_peer": 0.16217687074829934
+    },
+    "grok-4_3": {
+      "own_provider": "xai",
+      "own_judge_rate": 0.7346938775510204,
+      "peer_mean_rate": 0.7866666666666666,
+      "delta_self_minus_peer": -0.05197278911564618
+    },
+    "opus-4_8-high": {
+      "own_provider": "anthropic",
+      "own_judge_rate": 0.94,
+      "peer_mean_rate": 0.9199999999999999,
+      "delta_self_minus_peer": 0.020000000000000018
+    }
+  },
+  "fleiss_kappa": {
+    "value": 0.6493506493506493,
+    "n_complete_items": 198
+  },
+  "mean_pairwise_agreement": 0.8793939393939394,
+  "judge_errors": {
+    "anthropic": 0,
+    "xai": 2,
+    "google": 0
+  }
+}

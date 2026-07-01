@@ -1,0 +1,7 @@
+family,dataset,model,condition,mean_reward,n
+medqa,medqa,gemini-3_5-flash,none,0.9600,100
+medqa,medqa,gemini-3_5-flash,shuffle,0.9600,100
+medqa,medqa,gemini-3_5-flash,remove_answer,0.9400,100
+medqa,medqa,gemini-3_5-flash,remove_context,0.8500,100
+healthbench,consensus,gemini-3_5-flash,baseline,0.0000,50
+healthbench,consensus,gemini-3_5-flash,probe,0.7400,50

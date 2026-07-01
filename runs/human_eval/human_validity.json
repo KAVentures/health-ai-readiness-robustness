@@ -1,0 +1,26 @@
+{
+  "results": {
+    "openai": {
+      "n": 50,
+      "raw_agreement": 0.66,
+      "cohen_kappa": 0.2808798646362099
+    },
+    "anthropic": {
+      "n": 50,
+      "raw_agreement": 0.62,
+      "cohen_kappa": 0.2016806722689075
+    },
+    "xai": {
+      "n": 50,
+      "raw_agreement": 0.72,
+      "cohen_kappa": 0.425287356321839
+    },
+    "google": {
+      "n": 50,
+      "raw_agreement": 0.7,
+      "cohen_kappa": 0.37810945273631824
+    }
+  },
+  "human_rate": 0.54,
+  "n_used": 50
+}

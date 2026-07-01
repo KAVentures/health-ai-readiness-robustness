@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Accuracy is not readiness: a robustness stress-test of frontier models on medical question answering"
+authors:
+  - family-names: Afrasyab
+    given-names: Koyar
+    affiliation: "Kinvectum AB"
+type: article
+year: 2026
+license: CC-BY-4.0
+abstract: >-
+  An open-source robustness stress-test of four frontier LLMs (Claude Opus 4.8,
+  GPT-5.5, Grok 4.3, Gemini 3.5 Flash) on medical question answering. It re-implements
+  and extends the input-perturbation methodology of Gu et al. (The Illusion of Readiness
+  in Health AI, arXiv:2509.18234) as a benchmark-agnostic evaluation layer, adds an
+  open-ended abstention probe, a four-provider LLM judge panel with self-preference
+  correction, and a three-clinician human-validity check.
+references:
+  - type: article
+    title: "The Illusion of Readiness in Health AI"
+    authors:
+      - family-names: Gu
+        given-names: Yu
+    year: 2025
+    identifiers:
+      - type: other
+        value: "arXiv:2509.18234"
+    notes: "Source methodology for the input-perturbation stress-test battery."

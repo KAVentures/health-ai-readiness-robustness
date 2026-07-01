@@ -1,0 +1,2 @@
+family,dataset,model,condition,mean_reward,n
+medqa,medqa,opus-4_8-high,remove_context,0.7767,300

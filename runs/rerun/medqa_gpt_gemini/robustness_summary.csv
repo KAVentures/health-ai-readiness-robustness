@@ -1,0 +1,3 @@
+dataset,model,acc_baseline,acc_shuffle,delta_acc_shuffle,abstain_rate_remove_answer,inappropriate_rate_remove_answer,abstain_rate_remove_context,inappropriate_rate_remove_context
+medqa,gpt-5_5-high,,,,0.8567,0.1433,0.8233,0.1767
+medqa,gemini-3_5-flash,,,,0.0100,0.9900,0.0000,1.0000

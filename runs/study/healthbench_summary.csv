@@ -1,0 +1,5 @@
+model,hb_baseline_score,hb_probe_appropriate_uncertainty,hb_inappropriate_confident_rate
+opus-4_8-high,0.9667,0.9200,0.0800
+gpt-5_5-high,0.9667,0.7200,0.2800
+grok-4_3,0.9033,0.8000,0.2000
+gemini-3_1-pro-high,0.1133,0.1800,0.8200
