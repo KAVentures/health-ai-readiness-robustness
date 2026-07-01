@@ -52,8 +52,14 @@ runs/                        Curated results, judge votes, human labels, and fig
 
 `runs/` includes the processed evaluation outputs, the four-provider judge votes
 (`runs/judge_panel/`), the blinded human annotation packets and labels
-(`runs/human_eval/`), and all figures. Raw per-item completion dumps are omitted for
-size; they can be regenerated with the scripts below.
+(`runs/human_eval/`), and all figures.
+
+**Raw per-item completion dumps** (full model inputs/outputs for every eval cell) are
+kept out of the main tree for size and attached to the
+[v1.0.0 release](https://github.com/KAVentures/health-ai-readiness-robustness/releases/tag/v1.0.0)
+as `raw_completions.tar.gz` (9.5 MB compressed, ~70 MB uncompressed). Download and
+`tar xzf raw_completions.tar.gz` inside a medmarks checkout for bit-level
+reproducibility, or regenerate them with the scripts below.
 
 ## Reproducing the study
 
