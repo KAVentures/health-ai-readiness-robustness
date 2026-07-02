@@ -1,4 +1,5 @@
-# Accuracy is not readiness: a robustness stress-test of frontier models on medical question answering
+# Who judges medical AI? Judge self-preference and human leniency confound LLM-graded safety
+### A robustness stress-test of frontier models on medical question answering
 
 **Koyar Afrasyab, M.D.**
 Kinvectum AB — [www.kinvectum.com](https://www.kinvectum.com)
@@ -7,36 +8,40 @@ Kinvectum AB — [www.kinvectum.com](https://www.kinvectum.com)
 
 ## Abstract
 
-Frontier large language models (LLMs) now score near or above passing thresholds
-on medical licensing benchmarks, but high accuracy does not establish safe behavior
-when inputs are degraded — the regime that matters clinically. We re-implement the
+Open-ended medical benchmarks increasingly grade frontier large language models (LLMs)
+with *another LLM as judge*. We show that this evaluation design is fragile in a
+safety-relevant way, and that the fragility is easy to miss because clean-input accuracy
+is high. Building a benchmark-agnostic, open-source re-implementation of the
 input-perturbation methodology of Gu et al. [1] (*The Illusion of Readiness in Health
-AI*) as a benchmark-agnostic, open-source evaluation layer and apply its
-text-applicable stress tests to four frontier models (Claude Opus 4.8, GPT-5.5, Grok
-4.3, Gemini 3.5 Flash), all at high reasoning effort. On multiple-choice medical QA
-(MedQA-USMLE) we apply option shuffling, correct-answer removal, and context removal,
-and we extend the abstention axis to open-ended clinical conversation (HealthBench)
-via context truncation. Positional robustness is essentially solved (shuffling moves
-accuracy ≤4 points), but **calibrated abstention is not**: when the correct option or
-the clinical context is removed, every model still gives a confident, specific answer
-6–20% of the time on MCQ and 8–33% in open-ended conversation, despite being told an
-abstention option may be correct.
-To keep the open-ended metric honest we re-scored every completion with a
-four-provider judge panel: agreement is only moderate (Fleiss' κ = 0.65) and GPT-5.5
-shows a large self-preference (+0.16) that, once removed, roughly doubles its measured
-over-confidence (0.14 → 0.30) and drops it from second-best to near-worst. A blinded
-subsample labeled by three independent clinicians (who agree with one another at
-Fleiss' κ = 0.64) shows all LLM judges are systematically lenient (clinician-consensus
-rate 0.54 vs judges' 0.66–0.84; judge-vs-consensus κ = 0.20–0.43), so LLM-judged safety
-rates should be read as upper bounds. With n = 50–100 per condition most pairwise rankings are not
-statistically separable; the robust, reproducible signal is the *qualitative*
-dissociation between high accuracy and imperfect abstention. Supplementary checks
-across all four models — a larger-n MedQA run (n = 300), a second MCQ benchmark
-(MedMCQA), and five-fold rollout resampling — confirm this pattern and its run-to-run
-stability (SD ≤ 0.02), while also exposing that automated context-removal is ill-posed
-on self-contained MedMCQA items. We release the full
-harness, perturbation definitions, prompts, per-item outputs, the judge panel, and a
-blinded human-annotation protocol.
+AI*), we stress-test four models — three flagships (Claude Opus 4.8, GPT-5.5, Grok 4.3)
+and, a tier below, Gemini 3.5 Flash, all at high reasoning effort — on multiple-choice
+medical QA (MedQA-USMLE) and extend the abstention axis to open-ended clinical
+conversation (HealthBench) via context truncation.
+Two robustness findings set the stage: positional robustness is essentially solved
+(option shuffling moves accuracy ≤4 points), but **calibrated abstention is not** — when
+the correct option or the clinical context is removed, every model still gives a
+confident, specific answer 6–20% of the time on MCQ and 8–33% in open-ended
+conversation, despite being told an abstention option may be correct.
+Our central contribution concerns the judge. Re-scoring every open-ended completion
+with a four-provider judge panel shows agreement is only moderate (Fleiss' κ = 0.65) and
+that **GPT-5.5 exhibits a large self-preference (+0.16)**: judged by a sibling of itself
+it looks second-safest, but once its own provider is removed from scoring its measured
+over-confidence roughly doubles (0.14 → 0.30) and it falls from second-best to
+near-worst — the LLM-judged safety ranking *reverses*. A blinded 50-item human reference
+— labeled by the author and two independent clinicians (no financial or employment ties
+to the evaluated providers or to Kinvectum), who agree at Fleiss' κ = 0.64 — shows every
+LLM judge is systematically *lenient*: the human-consensus appropriate-uncertainty rate
+is 0.54 versus judges' 0.66–0.84 (judge-vs-consensus κ = 0.20–0.43). LLM-judged safety
+rates are therefore upper bounds, and same-provider judging can invert rankings.
+With n = 50–100 per condition most pairwise model rankings are not statistically
+separable; the robust, reproducible signals are (i) the *qualitative* dissociation
+between high accuracy and imperfect abstention and (ii) the judge-bias confounds
+themselves. Supplementary checks across all four models — a larger-n MedQA run
+(n = 300), a second MCQ benchmark (MedMCQA), and five-fold rollout resampling — confirm
+the robustness pattern and its run-to-run stability (SD ≤ 0.02), while also exposing that
+automated context-removal is ill-posed on self-contained MedMCQA items. We release the
+full harness, perturbation definitions, prompts, per-item outputs, the judge panel, and
+the blinded human-annotation protocol.
 
 ## 1. Introduction
 
@@ -61,22 +66,35 @@ text-only version of the same question for the current model generation, and we 
 the perturbation layer benchmark-agnostic so it can be re-run as models and datasets
 change.
 
+Re-running Gu et al.'s stress tests on 2026 models is, by itself, an incremental
+robustness update. Our main contribution is one layer up: the open-ended safety metric
+that such evaluations increasingly rely on is defined by an *LLM judge*, and we show
+that instrument is confounded in two ways that can silently change conclusions. First,
+**judge self-preference**: scoring a model with a sibling from its own provider inflates
+its apparent safety enough to *reverse* the ranking of which model over-commits least.
+Second, **human leniency**: even a four-provider judge consensus is systematically more
+lenient than a clinician reference, so every LLM-judged safety rate is an upper bound.
+The robustness stress-test is the substrate on which we demonstrate these judge-bias
+effects; the judge-bias analysis is the publishable delta.
+
 **Contributions.**
-1. An open, benchmark-agnostic re-implementation of the paper's text-applicable
-   stress tests (`medrobust`), decoupled from any single dataset.
-2. An extension of the input-removal / abstention axis to *open-ended* clinical
-   conversations (`healthbench_robust`), where the MCQ perturbations do not apply.
+1. **A judge-robustness analysis of LLM-graded medical-AI safety** — a four-provider
+   judge panel (Fleiss' κ, leave-one-provider-out scoring, a self-preference test)
+   plus a blinded human reference — showing that (a) same-provider judge self-preference
+   can *reverse* an LLM-judged safety ranking and must be corrected for it, and (b) all
+   LLM judges are systematically lenient relative to clinician labels, so LLM-judged
+   safety rates are upper bounds.
+2. An open, benchmark-agnostic re-implementation of the paper's text-applicable
+   stress tests (`medrobust`), decoupled from any single dataset, and an extension of
+   the input-removal / abstention axis to *open-ended* clinical conversation
+   (`healthbench_robust`), where the MCQ perturbations do not apply.
 3. A four-model, high-reasoning evaluation with confidence intervals, an explicit
-   accounting of statistical power, and a transparent limitations analysis intended
-   to survive expert review.
-4. A judge-robustness analysis of the open-ended metric: a four-provider judge panel
-   (Fleiss' κ, leave-one-provider-out scoring, a self-preference test) plus a blinded
-   human-annotation protocol — showing that LLM-judged safety rankings can be reversed
-   by judge self-preference and must be corrected for it.
+   accounting of statistical power (most pairwise model rankings are *not* separable at
+   this n), and a transparent limitations analysis intended to survive expert review.
 
 We do **not** claim to replicate the original paper's numbers: the models, the
 modality (text vs. vision), and the datasets differ. We replicate its *methodology
-and its qualitative conclusion*.
+and its qualitative conclusion*, and build the judge-bias analysis on top of it.
 
 ### 1.1 Related work
 
@@ -111,8 +129,8 @@ paradigm carries well-documented biases — position, verbosity, and especially
 self-enhancement, in which a model rates its own (or its provider's) outputs more
 favorably [8, 9]; models can even recognize their own generations and favor them [10].
 Rather than assume these away, we measure inter-judge reliability, quantify
-self-preference with a leave-one-provider-out panel, and validate against a
-consensus of three independent clinicians.
+self-preference with a leave-one-provider-out panel, and validate against a human
+reference labeled by the author and two independent clinicians.
 
 ## 2. Methods
 
@@ -221,12 +239,18 @@ with a human subsample.
 - **Human validity subsample.** Because LLM judges share correlated errors, panel
   agreement establishes reliability but not validity. We therefore drew a blinded,
   provider-balanced subsample of 50 probe items (model identity and all machine
-  verdicts hidden) and had **three independent clinicians** annotate it against the
-  same criterion, each working from an identical packet. We report human inter-rater
-  reliability (pairwise Cohen's κ and Fleiss' κ) and, against the clinicians'
-  majority-vote consensus, judge-vs-consensus raw agreement and Cohen's κ. *(The human
-  labels are an external annotation step; the harness, sampling, packet-generation, and
-  scoring code are released and the result is reported wherever labels are available.)*
+  verdicts hidden) and had a **three-rater human panel** annotate it against the same
+  criterion, each rater working from an identical packet. The panel comprised the
+  author (a physician; rater R1) and **two independent clinicians** (raters O and G)
+  with no financial or employment ties to the evaluated model providers or to
+  Kinvectum AB. The author's participation is a bounded, disclosed conflict of interest
+  (see *Ethics*); we report every rater separately so the reader can see the author's
+  labels, the independent clinicians' labels, and their agreement structure rather than
+  only a pooled number. We report human inter-rater reliability (pairwise Cohen's κ and
+  Fleiss' κ) and, against the panel's majority-vote consensus, judge-vs-consensus raw
+  agreement and Cohen's κ. *(The human labels are an external annotation step; the
+  harness, sampling, packet-generation, and scoring code are released and the result is
+  reported wherever labels are available.)*
 
 The judging design and its limitations are treated further in §5.
 
@@ -237,7 +261,7 @@ acc(none) − acc(shuffle), and the inappropriate-confident-answer rate under ea
 removal. For HealthBench we report the baseline rubric score, the appropriate-
 uncertainty rate, and its complement. All proportions are accompanied by Wilson
 95% confidence intervals [12]. Inter-rater reliability uses Fleiss' κ [13] for the
-four-judge panel and for the three-clinician human panel, and Cohen's κ [14] for
+four-judge panel and for the three-rater human panel, and Cohen's κ [14] for
 pairwise and judge-vs-consensus agreement. Given n = 50–100
 per cell we deliberately avoid formal
 null-hypothesis significance testing of every pairwise contrast: the intervals are
@@ -369,31 +393,45 @@ its own provider.
 
 ![Judge self-preference by provider](runs/judge_panel/panel_self_preference.png)
 
-### 3.5 Judge validity against clinician reviewers
+### 3.5 Judge validity against a clinician-anchored human panel
 
 Panel agreement establishes reliability, not validity: four LLM judges could agree
-and still be wrong relative to a human. **Three clinicians independently labeled the
-blinded 50-item subsample** (§2.6) against the same criterion, working from identical
-packets with model identity and all machine verdicts hidden (packet generator:
-`scripts/make_annotator_packets.py`). This lets us report both human inter-rater
-reliability — which a single annotator cannot provide — and judge validity against the
-human consensus. The result is the study's sharpest caution about the metric's
-absolute level.
+and still be wrong relative to a human. A **three-rater human panel** independently
+labeled the blinded 50-item subsample (§2.6) against the same criterion, working from
+identical packets with model identity and all machine verdicts hidden (packet
+generator: `scripts/make_annotator_packets.py`). The panel is the **author (R1, a
+physician)** plus **two independent clinicians (O and G)** with no ties to the
+evaluated providers or to Kinvectum (§2.6, *Ethics*). We report every rater separately
+so the author's own labels are visible and the reader can judge the independent
+clinicians' contribution directly. This is the study's sharpest caution about the
+metric's absolute level — and, because one rater is the author, the one we caveat most
+heavily.
 
-**Humans agree with one another about as well as the LLM panel does.** Across all
-three clinicians on all 50 items, Fleiss' κ = **0.643** — substantial agreement, and
-close to the four-judge panel's own inter-rater reliability (κ ≈ 0.65, §3.4).
-Pairwise Cohen's κ ranged from 0.47 to 0.88:
+**The raters agree substantially, but that agreement is uneven — and partly reflects
+the author.** Across all three raters on all 50 items, Fleiss' κ = **0.643** —
+substantial, and close to the four-judge panel's own inter-rater reliability (κ ≈ 0.65,
+§3.4). But the pairwise structure matters:
 
-| clinician pair | raw agreement | Cohen's κ |
+| rater pair | raw agreement | Cohen's κ |
 |---|---|---|
-| C1 ↔ C2 | 0.94 | 0.88 |
-| C1 ↔ C3 | 0.80 | 0.59 |
-| C2 ↔ C3 | 0.74 | 0.47 |
+| R1 (author) ↔ O (clinician) | 0.94 | 0.88 |
+| R1 (author) ↔ G (clinician) | 0.80 | 0.59 |
+| O (clinician) ↔ G (clinician) | 0.74 | 0.47 |
 
-The three clinicians' own appropriate-uncertainty rates were 0.54, 0.52, and 0.70,
-and their **majority-vote consensus rate is 0.54** (50 items, no ties). We validate the
-judges against that consensus:
+The high Fleiss κ is driven by the author (R1) and clinician O agreeing on 47/50 items
+(κ = 0.88); the two *independent* clinicians agree with each other only moderately
+(O↔G κ = 0.47). We flag this transparently: the panel's overall reliability should not
+be read as "three near-identical experts." The raters' own appropriate-uncertainty
+rates were R1 = 0.54, O = 0.52, G = 0.70.
+
+**The consensus is author-influenced — and we report it as such.** Because R1 and O
+agree on 47/50 items, the majority-vote consensus (rate **0.54**, 50 items, no ties)
+tracks the author's labels almost exactly (R1's own rate is also 0.54). The consensus
+is therefore *not* independent of the author; it is best read as "the author's labels,
+corroborated on the direction by two independent clinicians who are both also stricter
+than the LLM judges." We validate the judges against this consensus, and separately
+report every judge against each *independent* clinician below so the finding does not
+rest on the author alone.
 
 | | Human consensus | GPT-5.5 | Opus 4.8 | Grok 4.3 | Gemini 3.5 Flash |
 |---|---|---|---|---|---|
@@ -401,15 +439,16 @@ judges against that consensus:
 | raw agreement vs consensus | — | 0.66 | 0.62 | 0.72 | 0.70 |
 | Cohen's κ vs consensus | — | 0.28 | 0.20 | **0.43** | 0.38 |
 
-Two things stand out. **First, every LLM judge is systematically more lenient than the
-clinicians:** the human consensus credits appropriate uncertainty on 54% of items, the
-judges on 66–84%. The disagreements are almost entirely one-directional — for GPT-5.5,
-16 items were judged "appropriately uncertain" that the consensus marked confident,
-against only 1 in the opposite direction (Opus 16/3, Gemini 12/3, Grok 10/4; full 2×2
-confusion counts per judge in Appendix C). **Second, judge-vs-consensus agreement is
-only fair-to-moderate** (κ = 0.20–0.43) — well below the human-human Fleiss κ of 0.64 —
-and GPT-5.5, the paper's primary judge, is near the bottom (κ = 0.28), while Grok
-agrees best with the clinicians (κ = 0.43).
+Two things stand out. **First, the human raters are systematically stricter than the
+LLM judges.** The consensus credits appropriate uncertainty on 54% of items, the judges
+on 66–84%; and this does not depend on the author — the two independent clinicians rate
+0.52 (O) and 0.70 (G), both at or below every judge except Grok. The disagreements are
+almost entirely one-directional: for GPT-5.5, 16 items were judged "appropriately
+uncertain" that the consensus marked confident, against only 1 in the opposite direction
+(Opus 16/3, Gemini 12/3, Grok 10/4; full 2×2 confusion counts per judge in Appendix C).
+**Second, judge-vs-consensus agreement is only fair-to-moderate** (κ = 0.20–0.43) — well
+below the human Fleiss κ of 0.64 — and GPT-5.5, the paper's primary judge, is near the
+bottom (κ = 0.28), while Grok agrees best (κ = 0.43).
 
 The implication is direct and strengthens the paper's thesis while puncturing the
 metric's precision: **by a clinician standard the over-confidence problem is worse than
@@ -419,11 +458,15 @@ above is preserved (models over-commit; GPT-5.5 self-prefers; Opus abstains best
 absolute appropriate-uncertainty rates from any LLM judge — including our panel —
 should be read as **upper bounds** on real safety, not point estimates.
 
-This now rests on three clinicians with substantial inter-rater agreement rather than a
-single annotator, but it remains 50 items scored against a strict operationalization of
-the criterion that may be tighter than the authors intended (see §5); it is a strong
-calibration signal, not a definitive ground truth. Per-annotator κ against each judge
-and the full multi-rater breakdown are in `runs/human_eval/human_validity_multi.{md,json}`
+This is the single most n-limited claim in the paper, and its binding constraint: it
+rests on **50 items in one blinded batch**, scored against a strict operationalization
+of the criterion that may be tighter than HealthBench's authors intended (see §5); one
+of the three raters is the author; and the two independent clinicians agree with each
+other only moderately. It is a strong calibration *signal* — the direction is robust to
+dropping the author (both independent clinicians are stricter than the primary judge) —
+but not definitive ground truth. A larger, fully external multi-clinician adjudication
+is the ideal we did not reach here. Per-annotator κ against each judge and the full
+multi-rater breakdown are in `runs/human_eval/human_validity_multi.{md,json}`
 (scorer: `scripts/score_human_eval_multi.py`).
 
 ### 3.6 Robustness checks: larger n, a second benchmark, and sampling variance
@@ -479,54 +522,53 @@ improved but not solved, and the residual failure rate — roughly 1 in 12 to 1 
 depending on model and modality (panel-based for the open-ended probe) — is large
 relative to any acceptable clinical error budget. Because we *cued* abstention in the
 MCQ setting, these are optimistic estimates; a naturalistic deployment without such
-cues would likely be worse. Our human-validity check points the same way: a human
-reviewer judged appropriate uncertainty far less often than any LLM judge (0.54 vs
-0.66–0.84), so the LLM-judged open-ended rates are best read as upper bounds on real
-safety — the gap between benchmark behavior and clinical readiness is, if anything,
-understated here.
+cues would likely be worse. Our human-validity check points the same way: the human
+panel judged appropriate uncertainty far less often than any LLM judge (consensus 0.54,
+and both *independent* clinicians at 0.52 and 0.70, vs judges' 0.66–0.84), so the
+LLM-judged open-ended rates are best read as upper bounds on real safety — the gap
+between benchmark behavior and clinical readiness is, if anything, understated here.
 
-### 4.1 Per-model comparison: which model performs best?
+### 4.1 Per-model comparison: what the intervals will and will not support
 
-No single model dominates, and on MCQ the differences are mostly within overlapping
-confidence intervals, so the comparison below is a careful reading of *where the
-weight of evidence points*, not a leaderboard of statistically separated ranks.
+We resist a leaderboard. At n = 50–100 per cell most pairwise contrasts are within
+overlapping Wilson intervals, and even the n = 300 MedQA run leaves the three flagships
+non-separable (§3.6, §5). So we state only what the intervals support, and label the
+rest as *directional, not established*.
 
-- **Claude Opus 4.8 — best on the safety-critical axis.** It has the *lowest* clean
-  MedQA accuracy of the four (0.92), but the gap to the others (0.94–0.96) is within
-  CI. Where it stands out is calibrated abstention in open-ended conversation: after
-  self-preference correction it has the lowest inappropriate-confident rate by a clear
-  margin (0.08 leave-own-provider-out vs 0.21–0.33 for the others). Its MCQ abstention
-  is middling (0.18 / 0.20), so the strength is specific to free-text dialogue — the
-  setting closest to real clinical use. If one axis must be prioritized for clinical
-  safety, Opus is the model these data favor.
-- **Grok 4.3 — best on MCQ, and the most human-aligned judge.** It has the (tied-)
-  highest clean MedQA accuracy (0.96) and the strongest MCQ abstention (0.11 answer-
-  removed, 0.10 context-removed), with no positional bias (Δacc +0.01). Its open-ended
-  abstention is mid-pack (0.21). Separately, *as a judge* it agreed best with the human
-  reviewer (κ = 0.43) and showed slightly negative self-preference (−0.05), making it
-  the most trustworthy panelist here — a useful and somewhat surprising secondary
-  finding.
-- **GPT-5.5 — strongest raw answers, but its apparent safety was an artifact.** It has
-  the best HealthBench baseline rubric score (0.98) and top-tier MedQA accuracy (0.94,
-  rising to 0.98 under shuffle) and solid MCQ abstention (0.12 / 0.17). Under its own
-  judge it looked like the second-safest model open-ended (0.14); once its own provider
-  is removed from scoring, that doubles to 0.30 (near-worst). The lesson is not that
-  GPT-5.5 is unsafe relative to peers on MCQ — there it is competitive — but that its
-  open-ended safety was *overstated by self-judging* and must be read off the peer
-  panel.
-- **Gemini 3.5 Flash — weakest open-ended, with a fairness caveat.** It ties for top
-  MedQA accuracy (0.96) and has the single best MCQ answer-removal score (0.06), but
-  the worst open-ended abstention (0.33) and the largest single-judge-to-panel gap on
-  the open-ended probe. Crucially, it is a smaller, cheaper *Flash* model substituted
-  for the intended Gemini Pro flagship (§2.1), so it should not be read as Google's
-  flagship-tier result; that it remains competitive on MCQ while a tier below the
-  others is itself notable.
+**What the data do *not* separate.** On MCQ accuracy the four models are
+indistinguishable for practical purposes (0.92–0.96, all overlapping). On MCQ
+abstention the ordering (Gemini/Grok lower inappropriate rates, Opus/GPT-5.5 higher) is
+within overlapping intervals at both n = 100 and n = 300 — we do not claim an MCQ
+abstention ranking. The HealthBench *baseline* rubric ordering is likewise not something
+we lean on (single-judge, n = 50).
 
-The honest bottom line: on the accuracy axis the four are indistinguishable for
-practical purposes; the meaningful separation is on open-ended calibrated abstention,
-where **Opus 4.8 is best and Gemini 3.5 Flash worst**, and even there the absolute
-rates are upper bounds (the three clinician reviewers judged all models more harshly
-than any LLM judge, §3.5).
+**The one separation that survives — with two large asterisks.** After removing judge
+self-preference, the open-ended inappropriate-confident rates spread from ≈0.08 (Opus,
+leave-own-provider-out) to ≈0.30–0.33 (GPT-5.5, Gemini), a gap wide relative to its
+n = 50 interval. On that axis the evidence points to **Opus abstaining best and
+Gemini 3.5 Flash worst.** Both asterisks matter: (i) this rests on **n = 50 scored by
+LLM judges**, and the human panel shows those judges are uniformly lenient, so the
+*absolute* rates are upper bounds even where the *ordering* holds (§3.5); and (ii)
+Gemini is a *Flash* tier model, not Google's flagship (§2.1), so its last-place
+open-ended finish is partly a tier effect, not necessarily a Google-flagship result.
+
+**Two model-specific findings we do stand behind, because they are about the
+*measurement*, not a rank:**
+
+- **GPT-5.5's apparent open-ended safety was inflated by self-judging.** Under its own
+  provider's judge it looked second-safest (0.14 inappropriate); under peer judges only,
+  that roughly doubles to 0.30. This is not a claim that GPT-5.5 is the least safe model
+  — the peer-judged rates of GPT-5.5, Gemini, and Grok overlap — but that its
+  self-judged number was not trustworthy. This is the ranking-reversal result (§3.4).
+- **Grok 4.3 was the most human-aligned *judge*.** As a panelist it agreed best with the
+  human consensus (κ = 0.43) and showed slightly negative self-preference (−0.05). This
+  is a statement about Grok-as-judge, not Grok-as-subject (whose abstention is mid-pack).
+
+The honest bottom line: on accuracy the four are practically indistinguishable; the only
+subject-model separation the data support is Opus-best / Gemini-worst on open-ended
+abstention, and even that is an upper-bound ordering on n = 50 with a tier confound. The
+firmer contributions here are the two measurement findings above — self-preference and
+human leniency — which do not depend on separating the models from one another.
 
 A methodological corollary deserves emphasis: the inter-model *ordering* on the
 open-ended probe was not trustworthy until we corrected for judge self-preference.
@@ -558,19 +600,27 @@ We list these prominently because they bound every claim above.
    neutralize via leave-one-provider-out scoring). The third concern, *validity* —
    whether even the panel consensus matches expert human judgment — is **not** settled
    by inter-LLM agreement, because LLM judges share correlated failure modes. We
-   ran a blinded, provider-balanced 50-item annotation by **three independent
-   clinicians** for exactly this check (§3.5): judge-vs-consensus κ is only 0.20–0.43
-   and all judges are one-directionally lenient, so reported appropriate-uncertainty
-   rates are upper bounds. The three clinicians agree substantially with one another
-   (Fleiss' κ = 0.64), which both rules out the earlier single-annotator objection and
-   shows the humans are internally more consistent than they are with any judge. **That
-   human check is still limited:** it is 50 items, so κ estimates carry wide uncertainty;
-   the criterion is operationalized strictly and we cannot fully separate genuine judge
-   error from a stricter-but-equally-valid human threshold; and three raters, while
-   enough for a reliability estimate, is a small panel. A larger-n multi-clinician
-   adjudication remains the ideal gold standard. Note also that the panel judges include
-   smaller/cheaper models (Gemini 3.5 Flash) and that one judge (Grok) dropped 2/200
-   items to provider-side moderation.
+   ran a blinded, provider-balanced 50-item annotation by a **three-rater human panel —
+   the author (a physician) plus two independent clinicians** — for exactly this check
+   (§3.5): judge-vs-consensus κ is only 0.20–0.43 and all judges are one-directionally
+   lenient, so reported appropriate-uncertainty rates are upper bounds. **This is the
+   binding constraint on the paper's sharpest claim, and it carries three specific
+   caveats we do not want buried.** (a) *n and batch.* It is 50 items in a single
+   blinded batch, so all κ estimates carry wide uncertainty and there is no
+   between-batch replication. (b) *Author-in-the-panel.* One of the three raters is the
+   author — a disclosed, bounded conflict of interest (see *Ethics*). The author (R1)
+   and one clinician (O) agree on 47/50 items (κ = 0.88), so the majority-vote consensus
+   tracks the author's labels almost exactly and is *not* independent of the author. We
+   mitigate this by reporting every rater separately and by checking the direction
+   without the author: both independent clinicians (rates 0.52 and 0.70) are also
+   stricter than the primary judge, so the "judges are lenient" conclusion does not
+   depend on the author's labels — but the *precise* consensus rate does. (c)
+   *Criterion strictness.* The criterion is operationalized strictly and we cannot fully
+   separate genuine judge error from a stricter-but-equally-valid human threshold. A
+   larger, fully external multi-clinician adjudication (author excluded) remains the
+   ideal gold standard and is the most important follow-up. Note also that the panel
+   *judges* include a smaller/cheaper model (Gemini 3.5 Flash) and that one judge (Grok)
+   dropped 2/200 items to provider-side moderation.
 3. **Mixed judges for baseline vs. probe.** Provider moderation forced the HealthBench
    baseline onto GPT-4.1-mini while the probe used GPT-5.5; the two columns are not a
    matched pair.
@@ -678,8 +728,9 @@ answers; `abstain + inappropriate = n`.
 
 ## Appendix C. Judge-vs-human confusion matrices
 
-Per-judge 2×2 counts against the clinician majority-vote consensus on the blinded
-50-item subsample (§3.5). **false-lenient** = judge scored appropriate-uncertainty but
+Per-judge 2×2 counts against the human-panel majority-vote consensus (author + two
+independent clinicians; author-influenced, see §3.5) on the blinded 50-item subsample.
+**false-lenient** = judge scored appropriate-uncertainty but
 the consensus scored confident/inappropriate (judge too soft); **false-strict** = judge
 scored inappropriate but the consensus scored appropriate. The asymmetry is the finding:
 every judge errs lenient far more often than strict.
@@ -808,11 +859,31 @@ environment and are not distributed.
 
 This study uses only public, de-identified benchmark data and involves no human
 subjects, patient data, or clinical intervention; no ethics-board approval was
-required. The human-validity annotation was performed by the author. The work is not
-clinical advice and does not validate any model for clinical use; its purpose is the
-opposite — to document safety gaps that argue *against* unguarded deployment. The
-author declares no financial conflict of interest with any of the evaluated model
-providers; models were accessed through standard paid or free API tiers.
+required.
+
+**Human annotation and its conflict of interest.** The human-validity subsample (§3.5)
+was labeled by a three-rater panel: the **author** (Koyar Afrasyab, M.D.; rater R1) and
+**two independent clinicians** (raters O and G). We disclose the author's participation
+as a conflict of interest: an author serving as one of the raters that validate their
+own study can bias the human reference toward the study's conclusion. We bound and
+disclose this rather than hide it — every rater's labels are reported and released
+separately; the two independent clinicians have no financial or employment relationship
+with the author beyond this annotation, no ties to the evaluated model providers
+(OpenAI, Anthropic, xAI, Google), and no ties to Kinvectum AB; and we show (§3.5, §5)
+that the paper's human-leniency conclusion holds on the two independent clinicians'
+labels alone, without the author's. We note transparently that the majority-vote
+consensus is author-influenced (the author and clinician O agree on 47/50 items), so the
+consensus is a corroborated author reference, not an author-independent one. The two
+clinicians are de-identified by initial at their request; identifying details can be
+provided to editors/reviewers in confidence. The ideal design — a larger panel of
+clinicians with no author participation — was not reached here and is flagged as the
+primary follow-up (§5).
+
+**Purpose and provider COI.** The work is not clinical advice and does not validate any
+model for clinical use; its purpose is the opposite — to document safety gaps that argue
+*against* unguarded deployment. The author declares no financial conflict of interest
+with any of the evaluated model providers; models were accessed through standard paid or
+free API tiers.
 
 ## Funding
 
@@ -821,11 +892,14 @@ The funder had no role in study design, analysis, or the decision to publish.
 
 ## Acknowledgements
 
-We thank the model providers — Anthropic, OpenAI, xAI, and Google — for building and
-making available the frontier models evaluated here and for sustaining rapid progress
-at the frontier. We thank Gu et al. for the original *Illusion of Readiness in Health
-AI* study [1] and for open-sourcing the stress-test methodology that this work builds
-on, and OpenAI for releasing HealthBench [11], on which the open-ended probe depends.
+We thank the two independent clinicians (de-identified as O and G) who volunteered to
+label the blinded human-validity subsample; they received no compensation and have no
+stake in the study's conclusions. We thank the model providers — Anthropic, OpenAI, xAI,
+and Google — for building and making available the frontier models evaluated here and
+for sustaining rapid progress at the frontier. We thank Gu et al. for the original
+*Illusion of Readiness in Health AI* study [1] and for open-sourcing the stress-test
+methodology that this work builds on, and OpenAI for releasing HealthBench [11], on
+which the open-ended probe depends.
 
 ## References
 

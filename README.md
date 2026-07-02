@@ -1,6 +1,6 @@
-# Accuracy Is Not Readiness: A Robustness Stress-Test of Frontier Models on Medical QA
+# Who Judges Medical AI? Judge Self-Preference and Human Leniency Confound LLM-Graded Safety
 
-**A benchmark-agnostic re-implementation and text-modality extension of the Health-AI input-perturbation methodology, applied to four current frontier reasoning models.**
+**A robustness stress-test of frontier models on medical QA — used to show that the LLM *judge*, not just the model, is a first-order confound in open-ended medical-AI safety evaluation.** A benchmark-agnostic re-implementation and text-modality extension of the Health-AI input-perturbation methodology, applied to three flagship reasoning models plus one mid-tier model.
 
 Author: **Koyar Afrasyab, M.D.**
 Affiliation: **Kinvectum AB**
@@ -8,7 +8,7 @@ Funding: **Kinvectum AB**
 
 This repository contains the manuscript, evaluation environments, orchestration/judging/scoring code, saved analysis tables, figures, judge-panel votes, and human-annotation data for a robustness study of frontier LLMs on medical question answering. It **re-implements and extends** the input-perturbation methodology of Gu et al., *The Illusion of Readiness in Health AI* (arXiv:2509.18234, 2025), as an open-source evaluation layer on top of the [MedARC-AI/medmarks](https://github.com/MedARC-AI/medmarks) harness.
 
-This is a **methodology re-implementation and model update on text-modality benchmarks**, not a full reproduction of the original multimodal study: it re-uses the original's perturbation logic (option shuffling, answer removal, context removal) and adds an open-ended abstention probe, a four-provider LLM judge panel, and a three-clinician human-validity check, while deliberately excluding the original study's image-based components.
+This is a **methodology re-implementation and model update on text-modality benchmarks**, not a full reproduction of the original multimodal study: it re-uses the original's perturbation logic (option shuffling, answer removal, context removal) and adds an open-ended abstention probe, a four-provider LLM judge panel, and a three-rater human-validity check (the author plus two independent clinicians), while deliberately excluding the original study's image-based components. The robustness re-run is the substrate; the **judge-bias analysis — self-preference and human leniency — is the new contribution.**
 
 ## Quick Links
 
@@ -80,14 +80,14 @@ After **self-preference correction** (leave-one-provider-out), GPT-5.5's inappro
 
 - **Judge-panel reliability:** four-provider panel Fleiss' κ = **0.649** (198 complete items); judge choice shifts a score by up to ~0.20.
 - **Self-preference:** GPT-5.5 credits its own provider **+0.16** vs peers (largest of the four).
-- **Human validity:** three independent clinicians labeled the blinded 50-item subsample; inter-rater Fleiss' κ = **0.64**. All LLM judges are systematically more lenient than the clinician consensus (consensus appropriate-uncertainty **0.54** vs judges **0.66–0.84**), and judge-vs-consensus agreement is only fair-to-moderate (Cohen's κ **0.20–0.43**). LLM-judged safety rates should therefore be read as **upper bounds**.
+- **Human validity:** a three-rater panel — the **author (a physician)** plus **two independent clinicians** (no ties to the providers or to Kinvectum) — labeled the blinded 50-item subsample; inter-rater Fleiss' κ = **0.64**. Every LLM judge is systematically more lenient than the human consensus (consensus appropriate-uncertainty **0.54** vs judges **0.66–0.84**; the two *independent* clinicians rate 0.52 and 0.70, both at or below the judges), and judge-vs-consensus agreement is only fair-to-moderate (Cohen's κ **0.20–0.43**). LLM-judged safety rates should therefore be read as **upper bounds**. The author's participation as a rater is a disclosed conflict of interest and the consensus is author-influenced (author ↔ clinician O agree 47/50); see the paper's *Ethics* section and §3.5.
 
 ![MCQ failure-to-abstain with Wilson 95% confidence intervals (MedQA, n=100)](runs/final/forest_mcq_abstention.png)
 
 ## Key Conclusions
 
 - **Accuracy ≠ readiness.** Near-ceiling, positionally robust MCQ accuracy coexists with imperfect abstention: models over-commit when the information needed to answer safely is absent (MedQA inappropriate-confident 0.08–0.22; HealthBench 0.06–0.28).
-- **LLM judges are systematically lenient.** Against three clinicians (who agree at κ = 0.64), every judge over-credits appropriate uncertainty; the over-confidence problem is *worse* than any LLM judge reports.
+- **LLM judges are systematically lenient.** Against a human panel (the author + two independent clinicians, who agree at κ = 0.64), every judge over-credits appropriate uncertainty; the over-confidence problem is *worse* than any LLM judge reports. The direction holds on the two independent clinicians' labels alone.
 - **Self-preference is a first-order confound.** GPT-5.5 favors its own provider by +0.16; correcting for it reverses the open-ended ranking.
 - **Perturbations are not portable across benchmarks.** MedMCQA context-removal inappropriate rates jump to 0.86–0.92 — a benchmark artifact (items are answerable from the stem alone), a caution that automated context removal is only meaningful on vignette-style items.
 - **No single model dominates.** On MCQ, most pairwise differences fall within overlapping confidence intervals; the robust signal is the qualitative accuracy-vs-abstention dissociation. On open-ended calibrated abstention, Opus 4.8 is best and Gemini 3.5 Flash worst.
@@ -95,7 +95,7 @@ After **self-preference correction** (leave-one-provider-out), GPT-5.5's inappro
 ## Limitations
 
 - **Statistical power.** Headline cells are n = 100 (MCQ) / n = 50 (HealthBench); a supplementary n = 300 MedQA run tightens intervals to ≈ ±0.03–0.05 but the three flagship models remain non-separable. Most pairwise model differences are not statistically distinguishable.
-- **LLM-judge dependence (open-ended).** The open-ended metric is judge-defined; validated against three clinicians (human-human κ = 0.64), but on only 50 items, so κ estimates carry wide uncertainty.
+- **LLM-judge dependence (open-ended).** The open-ended metric is judge-defined; validated against a three-rater human panel (κ = 0.64) on only 50 items in one batch, so κ estimates carry wide uncertainty. One rater is the author (a disclosed conflict of interest) and the majority consensus is author-influenced; the leniency direction is confirmed on the two independent clinicians alone. A larger, fully external clinician panel is the primary follow-up.
 - **Mixed judges.** The HealthBench baseline was judged by GPT-4.1-mini and the probe by GPT-5.5 (provider moderation forced this); the two columns are not a matched pair.
 - **Model substitution.** Gemini is Flash tier, not a Pro flagship, due to quota.
 - **Single rollout (bounded).** Headline cells score each item once; five-fold resampling bounds within-model variance at SD 0.008–0.023.
@@ -159,7 +159,7 @@ See the docstring at the top of each script for its exact arguments and outputs.
 ## Data and Human Labels
 
 - Benchmark items are from public research datasets (MedQA, MedMCQA, HealthBench) — no real patient data.
-- Human labels (`runs/human_eval/`) come from three clinicians who each independently labeled the same blinded 50 items; annotators are de-identified (`R1`, `O`, `G`).
+- Human labels (`runs/human_eval/`) come from a three-rater panel who each independently labeled the same blinded 50 items: `R1` = the **author** (a physician), and `O`, `G` = **two independent clinicians** with no ties to the evaluated providers or to Kinvectum. Raters are de-identified by initial. The author's participation is a disclosed conflict of interest and the majority consensus is author-influenced (`R1`↔`O` agree 47/50); the paper's leniency conclusion is shown to hold on `O` and `G` alone. See `runs/human_eval/PROVENANCE.md` and the paper's *Ethics* section.
 
 ## Attribution
 
@@ -178,8 +178,8 @@ Benchmark sources: MedQA (Jin et al., 2021), MedMCQA (Pal et al., 2022), and Hea
 If you use this work, please cite both this repository and the original Gu et al. study it re-implements.
 
 ```bibtex
-@misc{afrasyab2026accuracynotreadiness,
-  title  = {Accuracy Is Not Readiness: A Robustness Stress-Test of Frontier Models on Medical Question Answering},
+@misc{afrasyab2026whojudges,
+  title  = {Who Judges Medical AI? Judge Self-Preference and Human Leniency Confound LLM-Graded Safety},
   author = {Afrasyab, Koyar},
   year   = {2026},
   howpublished = {GitHub repository},
