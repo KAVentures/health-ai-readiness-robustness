@@ -1,47 +1,45 @@
 # Who judges medical AI? Judge self-preference and human leniency confound LLM-graded safety
-### A robustness stress-test of frontier models on medical question answering
 
-**Koyar Afrasyab, M.D.**
-Kinvectum AB — [www.kinvectum.com](https://www.kinvectum.com)
+*A robustness stress-test of frontier models on medical question answering*
 
-**Preprint.** Code and data: `medrobust` and `healthbench_robust` environments, this repository.
+**Article type:** Original Research
+
+**Koyar Afrasyab, M.D.**^1^
+
+^1^ Kinvectum AB, Sweden. ORCID: [0009-0009-3530-4606](https://orcid.org/0009-0009-3530-4606)
+
+**Corresponding author:** Koyar Afrasyab, Kinvectum AB, Sweden. Email: *(supplied at submission)*
 
 ## Abstract
 
-Open-ended medical benchmarks increasingly grade frontier large language models (LLMs)
-with *another LLM as judge*. We show that this evaluation design is fragile in a
-safety-relevant way, and that the fragility is easy to miss because clean-input accuracy
-is high. Building a benchmark-agnostic, open-source re-implementation of the
-input-perturbation methodology of Gu et al. [1] (*The Illusion of Readiness in Health
-AI*), we stress-test four models — three flagships (Claude Opus 4.8, GPT-5.5, Grok 4.3)
-and, a tier below, Gemini 3.5 Flash, all at high reasoning effort — on multiple-choice
-medical QA (MedQA-USMLE) and extend the abstention axis to open-ended clinical
-conversation (HealthBench) via context truncation.
-Two robustness findings set the stage: positional robustness is essentially solved
-(option shuffling moves accuracy ≤4 points), but **calibrated abstention is not** — when
-the correct option or the clinical context is removed, every model still gives a
-confident, specific answer 6–20% of the time on MCQ and 8–33% in open-ended
-conversation, despite being told an abstention option may be correct.
-Our central contribution concerns the judge. Re-scoring every open-ended completion
-with a four-provider judge panel shows agreement is only moderate (Fleiss' κ = 0.65) and
-that **GPT-5.5 exhibits a large self-preference (+0.16)**: judged by a sibling of itself
-it looks second-safest, but once its own provider is removed from scoring its measured
-over-confidence roughly doubles (0.14 → 0.30) and it falls from second-best to
-near-worst — the LLM-judged safety ranking *reverses*. A blinded 50-item human reference
-— labeled by the author and two independent clinicians (no financial or employment ties
-to the evaluated providers or to Kinvectum), who agree at Fleiss' κ = 0.64 — shows every
-LLM judge is systematically *lenient*: the human-consensus appropriate-uncertainty rate
-is 0.54 versus judges' 0.66–0.84 (judge-vs-consensus κ = 0.20–0.43). LLM-judged safety
-rates are therefore upper bounds, and same-provider judging can invert rankings.
-With n = 50–100 per condition most pairwise model rankings are not statistically
-separable; the robust, reproducible signals are (i) the *qualitative* dissociation
-between high accuracy and imperfect abstention and (ii) the judge-bias confounds
-themselves. Supplementary checks across all four models — a larger-n MedQA run
-(n = 300), a second MCQ benchmark (MedMCQA), and five-fold rollout resampling — confirm
-the robustness pattern and its run-to-run stability (SD ≤ 0.02), while also exposing that
-automated context-removal is ill-posed on self-contained MedMCQA items. We release the
-full harness, perturbation definitions, prompts, per-item outputs, the judge panel, and
-the blinded human-annotation protocol.
+Open-ended medical benchmarks increasingly grade large language models (LLMs) with
+*another LLM as judge*. We show that this design is confounded in ways that can silently
+change safety conclusions. Re-implementing the input-perturbation methodology of Gu
+et al. [1] as a benchmark-agnostic, open-source layer, we stress-test four models —
+three flagships (Claude Opus 4.8, GPT-5.5, Grok 4.3) and one mid-tier model (Gemini 3.5
+Flash) — on multiple-choice medical question answering (MedQA-USMLE) and on open-ended
+clinical conversation (HealthBench). Positional robustness is essentially solved (option
+shuffling moves accuracy ≤4 points), but calibrated abstention is not: when the correct
+option or the clinical context is removed, every model still gives a confident answer
+6–20% of the time on multiple-choice questions and 8–33% in open-ended conversation,
+despite being told an abstention option may be correct. Re-scoring the open-ended
+completions with a four-provider judge panel, inter-judge agreement is only moderate
+(Fleiss' κ = 0.65) and GPT-5.5 shows a large self-preference (+0.16): judged by a model
+from its own provider it appears second-safest, but under peer judges its over-confidence
+roughly doubles (0.14 → 0.30) and it falls to near-worst — the LLM-judged ranking
+reverses. A blinded 50-item human reference (the author and two independent clinicians;
+Fleiss' κ = 0.64) shows every LLM judge is systematically lenient (human-consensus
+appropriate-uncertainty 0.54 versus judges 0.66–0.84; judge-vs-consensus κ = 0.20–0.43),
+so LLM-judged safety rates are upper bounds. At n = 50–100 per condition most pairwise
+model rankings are not statistically separable; the robust findings are the
+accuracy–abstention dissociation and the judge-bias confounds themselves. Supplementary
+checks (MedQA n = 300, MedMCQA, five-fold resampling) confirm the pattern and its
+run-to-run stability (SD ≤ 0.02). We release the full harness, prompts, per-item outputs,
+the judge panel, and the blinded human-annotation protocol.
+
+**Keywords:** medical question answering; large language models; LLM-as-a-judge;
+self-preference bias; uncertainty and abstention; clinical AI safety; evaluation
+robustness; HealthBench; MedQA
 
 ## 1. Introduction
 
@@ -84,10 +82,10 @@ effects; the judge-bias analysis is the publishable delta.
    can *reverse* an LLM-judged safety ranking and must be corrected for it, and (b) all
    LLM judges are systematically lenient relative to clinician labels, so LLM-judged
    safety rates are upper bounds.
-2. An open, benchmark-agnostic re-implementation of the paper's text-applicable
-   stress tests (`medrobust`), decoupled from any single dataset, and an extension of
-   the input-removal / abstention axis to *open-ended* clinical conversation
-   (`healthbench_robust`), where the MCQ perturbations do not apply.
+2. An open, benchmark-agnostic re-implementation of the source paper's text-applicable
+   stress tests, decoupled from any single dataset, and an extension of the
+   input-removal / abstention axis to *open-ended* clinical conversation, where the MCQ
+   perturbations do not apply. Both are released as reusable evaluation environments.
 3. A four-model, high-reasoning evaluation with confidence intervals, an explicit
    accounting of statistical power (most pairwise model rankings are *not* separable at
    this n), and a transparent limitations analysis intended to survive expert review.
@@ -135,6 +133,10 @@ reference labeled by the author and two independent clinicians.
 ## 2. Methods
 
 ### 2.1 Models and inference
+
+We evaluated four models (Table 1): three flagship reasoning models and one mid-tier model.
+
+**Table 1.** Evaluated models and their inference configuration.
 
 | Model | API identifier | Provider | Reasoning configuration |
 |---|---|---|---|
@@ -276,7 +278,11 @@ Appendix E.
 ### 3.1 Positional robustness is solved; accuracy is high
 
 MedQA accuracy is high and essentially unchanged by option shuffling for all four
-models (n = 100, paired):
+models (Table 2; n = 100, paired):
+
+**Table 2.** MedQA-USMLE accuracy under the unperturbed (none) and option-shuffle
+conditions, with Wilson 95% confidence intervals (n = 100, paired items). Δacc =
+acc(none) − acc(shuffle).
 
 | Model | acc (none) [95% CI] | acc (shuffle) [95% CI] | Δacc (shuffle) |
 |---|---|---|---|
@@ -295,7 +301,11 @@ to answer-option order.
 When the correct option is removed or the clinical context is stripped — and despite
 being told an abstention option may be correct — every model still chooses a wrong,
 concrete option a non-trivial fraction of the time (inappropriate-confident-answer
-rate, n = 100):
+rate; Table 3, n = 100):
+
+**Table 3.** Inappropriate-confident-answer rate on MedQA-USMLE under answer-removal and
+context-removal, with Wilson 95% confidence intervals (n = 100). Lower is safer; each
+rate is 1 − appropriate-abstention rate.
 
 | Model | answer removed [95% CI] | context removed [95% CI] |
 |---|---|---|
@@ -310,11 +320,12 @@ claim is the *level*: the best models fail to abstain on roughly one in ten such
 items, the worst on roughly one in five, even under a prompt that explicitly invites
 abstention.
 
-![MCQ failure-to-abstain with Wilson 95% confidence intervals (MedQA, n=100)](runs/final/forest_mcq_abstention.png)
+![](runs/final/forest_mcq_abstention.png)
 
-The forest plot above shows the same rates with Wilson intervals; the overlap is the
-point. Integer counts behind every cell (so any interval can be recomputed) are in
-Appendix B.
+**Figure 1.** MCQ failure-to-abstain (inappropriate-confident-answer rate) with Wilson
+95% confidence intervals (MedQA-USMLE, n = 100). The substantial interval overlap across
+the three flagship models is the point: the defensible claim is the level, not a ranking.
+Integer counts behind every cell are in Table B1 (Appendix B).
 
 ### 3.3 The pattern holds in open-ended conversation (HealthBench)
 
@@ -324,7 +335,12 @@ give a confident, definitive answer instead of flagging the gap a non-trivial
 fraction of the time. The exact rate, however, depends on the judge — so we report
 the single-judge result, then correct it with the panel.
 
-**Single-judge view (GPT-5.5 only).** This is the probe's as-run reward:
+**Single-judge view (GPT-5.5 only).** This is the probe's as-run reward (Table 4):
+
+**Table 4.** Open-ended HealthBench results under the single as-run judge (GPT-5.5).
+Baseline rubric score is judged by GPT-4.1-mini; appropriate-uncertainty and its
+complement (inappropriate-confident, with Wilson 95% CI) are scored on the
+context-removal probe by GPT-5.5 (n = 50).
 
 | Model | baseline rubric (GPT-4.1-mini) | appropriate uncertainty (GPT-5.5) | inappropriate confident [95% CI] |
 |---|---|---|---|
@@ -338,7 +354,12 @@ artifact of self-preference** (§3.4): GPT-5.5 was judging its own outputs here.
 
 **Panel view (self-preference removed).** Scoring each model only with the three
 judges that do *not* share its provider (leave-one-provider-out) gives the
-self-preference-robust estimate we treat as primary:
+self-preference-robust estimate we treat as primary (Table 5):
+
+**Table 5.** Open-ended inappropriate-confident rate before and after removing judge
+self-preference: the single as-run judge (GPT-5.5) versus the leave-own-provider-out
+estimate in which each subject model is scored only by the three judges from other
+providers (n = 50).
 
 | Model | inappropriate confident — single judge (GPT-5.5) | inappropriate confident — leave-own-provider-out (3 peer judges) |
 |---|---|---|
@@ -358,9 +379,11 @@ after the self-preference correction.
 
 The four-provider panel (200 completions, identical inputs) shows the open-ended
 metric is moderately — not highly — reliable, and that one judge is biased toward
-its own provider.
+its own provider (Table 6).
 
-*Appropriate-uncertainty rate by judge (rows = subject model judged; columns = judge):*
+**Table 6.** Appropriate-uncertainty rate on the open-ended probe by judge (rows =
+subject model judged; columns = judge; n = 50 per cell, 200 completions total). The
+diagonal (own-provider judge) is systematically at or above the off-diagonal for GPT-5.5.
 
 | subject \ judge | GPT-5.5 | Opus 4.8 | Grok 4.3 | Gemini 3.5 Flash |
 |---|---|---|---|---|
@@ -373,7 +396,12 @@ its own provider.
 - **Inter-rater reliability:** Fleiss' κ = **0.65** over the 198 items rated by all
   four judges (mean pairwise agreement 0.88) — "substantial" agreement, but far from
   interchangeable; the choice of judge moves a model's score by up to ~0.20.
-- **Self-preference (own-provider judge minus mean of the other three, same items):**
+- **Self-preference (own-provider judge minus mean of the other three, same items;
+  Table 7):**
+
+  **Table 7.** Judge self-preference: each subject model's own-provider judge rate minus
+  the mean rate of the other three judges on the same items. A positive value indicates a
+  model's own provider credits it more leniently.
 
   | subject model | own-judge rate | peer-mean rate | Δ (self − peer) |
   |---|---|---|---|
@@ -389,17 +417,27 @@ its own provider.
   that judges a model with a sibling of itself. (Grok dropped 2/200 items to a provider-side bio-safety
   moderation block; those items are excluded from its denominator.)
 
-![Single-judge vs self-preference-corrected over-confidence](runs/judge_panel/panel_single_vs_loo.png)
+Figure 2 contrasts the single-judge and self-preference-corrected over-confidence rates,
+and Figure 3 shows the per-provider self-preference.
 
-![Judge self-preference by provider](runs/judge_panel/panel_self_preference.png)
+![](runs/judge_panel/panel_single_vs_loo.png)
+
+**Figure 2.** Open-ended inappropriate-confident rate under the single as-run judge
+(GPT-5.5) versus the leave-own-provider-out estimate, by subject model (n = 50). The
+GPT-5.5 bar roughly doubles once its own-provider judge is removed.
+
+![](runs/judge_panel/panel_self_preference.png)
+
+**Figure 3.** Judge self-preference by provider: own-provider judge rate minus the mean
+of the other three judges on the same items. GPT-5.5 shows a large, isolated
+self-preference (+0.16); the other three are near zero.
 
 ### 3.5 Judge validity against a clinician-anchored human panel
 
 Panel agreement establishes reliability, not validity: four LLM judges could agree
 and still be wrong relative to a human. A **three-rater human panel** independently
 labeled the blinded 50-item subsample (§2.6) against the same criterion, working from
-identical packets with model identity and all machine verdicts hidden (packet
-generator: `scripts/make_annotator_packets.py`). The panel is the **author (R1, a
+identical packets with model identity and all machine verdicts hidden. The panel is the **author (R1, a
 physician)** plus **two independent clinicians (O and G)** with no ties to the
 evaluated providers or to Kinvectum (§2.6, *Ethics*). We report every rater separately
 so the author's own labels are visible and the reader can judge the independent
@@ -410,7 +448,11 @@ heavily.
 **The raters agree substantially, but that agreement is uneven — and partly reflects
 the author.** Across all three raters on all 50 items, Fleiss' κ = **0.643** —
 substantial, and close to the four-judge panel's own inter-rater reliability (κ ≈ 0.65,
-§3.4). But the pairwise structure matters:
+§3.4). But the pairwise structure matters (Table 8):
+
+**Table 8.** Pairwise agreement among the three human raters on the blinded 50-item
+subsample: the author (R1) and two independent clinicians (O, G). Raw agreement and
+Cohen's κ.
 
 | rater pair | raw agreement | Cohen's κ |
 |---|---|---|
@@ -431,7 +473,11 @@ is therefore *not* independent of the author; it is best read as "the author's l
 corroborated on the direction by two independent clinicians who are both also stricter
 than the LLM judges." We validate the judges against this consensus, and separately
 report every judge against each *independent* clinician below so the finding does not
-rest on the author alone.
+rest on the author alone (Table 9).
+
+**Table 9.** LLM judges versus the human-panel majority-vote consensus on the blinded
+50-item subsample: each judge's appropriate-uncertainty rate, raw agreement with the
+consensus, and Cohen's κ with the consensus.
 
 | | Human consensus | GPT-5.5 | Opus 4.8 | Grok 4.3 | Gemini 3.5 Flash |
 |---|---|---|---|---|---|
@@ -450,9 +496,8 @@ uncertain" that the consensus marked confident, against only 1 in the opposite d
 below the human Fleiss κ of 0.64 — and GPT-5.5, the paper's primary judge, is near the
 bottom (κ = 0.28), while Grok agrees best (κ = 0.43).
 
-The implication is direct and strengthens the paper's thesis while puncturing the
-metric's precision: **by a clinician standard the over-confidence problem is worse than
-any LLM judge reports.** On this subsample the consensus inappropriate-confident rate
+The implication is direct: by a clinician standard, the over-confidence problem is worse
+than any LLM judge reports. On this subsample the consensus inappropriate-confident rate
 is ≈0.46, versus GPT-5.5's 0.16 on the same items. The *direction* of every result
 above is preserved (models over-commit; GPT-5.5 self-prefers; Opus abstains best), but
 absolute appropriate-uncertainty rates from any LLM judge — including our panel —
@@ -466,8 +511,7 @@ other only moderately. It is a strong calibration *signal* — the direction is 
 dropping the author (both independent clinicians are stricter than the primary judge) —
 but not definitive ground truth. A larger, fully external multi-clinician adjudication
 is the ideal we did not reach here. Per-annotator κ against each judge and the full
-multi-rater breakdown are in `runs/human_eval/human_validity_multi.{md,json}`
-(scorer: `scripts/score_human_eval_multi.py`).
+multi-rater breakdown are provided in the supplementary materials.
 
 ### 3.6 Robustness checks: larger n, a second benchmark, and sampling variance
 
@@ -530,10 +574,10 @@ between benchmark behavior and clinical readiness is, if anything, understated h
 
 ### 4.1 Per-model comparison: what the intervals will and will not support
 
-We resist a leaderboard. At n = 50–100 per cell most pairwise contrasts are within
-overlapping Wilson intervals, and even the n = 300 MedQA run leaves the three flagships
-non-separable (§3.6, §5). So we state only what the intervals support, and label the
-rest as *directional, not established*.
+We do not report a leaderboard. At n = 50–100 per cell most pairwise contrasts fall
+within overlapping Wilson intervals, and even the n = 300 MedQA run leaves the three
+flagships non-separable (§3.6, §5). We therefore state only what the intervals support
+and label the rest as directional, not established.
 
 **What the data do *not* separate.** On MCQ accuracy the four models are
 indistinguishable for practical purposes (0.92–0.96, all overlapping). On MCQ
@@ -542,12 +586,12 @@ within overlapping intervals at both n = 100 and n = 300 — we do not claim an 
 abstention ranking. The HealthBench *baseline* rubric ordering is likewise not something
 we lean on (single-judge, n = 50).
 
-**The one separation that survives — with two large asterisks.** After removing judge
+**The one separation the data support, with two important caveats.** After removing judge
 self-preference, the open-ended inappropriate-confident rates spread from ≈0.08 (Opus,
 leave-own-provider-out) to ≈0.30–0.33 (GPT-5.5, Gemini), a gap wide relative to its
-n = 50 interval. On that axis the evidence points to **Opus abstaining best and
-Gemini 3.5 Flash worst.** Both asterisks matter: (i) this rests on **n = 50 scored by
-LLM judges**, and the human panel shows those judges are uniformly lenient, so the
+n = 50 interval. On that axis the evidence points to Opus abstaining best and
+Gemini 3.5 Flash worst. Both caveats matter: (i) this rests on n = 50 scored by
+LLM judges, and the human panel shows those judges are uniformly lenient, so the
 *absolute* rates are upper bounds even where the *ordering* holds (§3.5); and (ii)
 Gemini is a *Flash* tier model, not Google's flagship (§2.1), so its last-place
 open-ended finish is partly a tier effect, not necessarily a Google-flagship result.
@@ -564,7 +608,7 @@ open-ended finish is partly a tier effect, not necessarily a Google-flagship res
   human consensus (κ = 0.43) and showed slightly negative self-preference (−0.05). This
   is a statement about Grok-as-judge, not Grok-as-subject (whose abstention is mid-pack).
 
-The honest bottom line: on accuracy the four are practically indistinguishable; the only
+In summary: on accuracy the four models are practically indistinguishable; the only
 subject-model separation the data support is Opus-best / Gemini-worst on open-ended
 abstention, and even that is an upper-bound ordering on n = 50 with a tier confound. The
 firmer contributions here are the two measurement findings above — self-preference and
@@ -663,37 +707,26 @@ We list these prominently because they bound every claim above.
 
 ## 6. Reproducibility
 
-- Perturbation environment: `environments/medrobust/` (`medrobust.py`).
-- Open-ended probe: `environments/healthbench_robust/` (`healthbench_robust.py`).
-- Orchestration: `scripts/run_robustness_study.py`; consolidation/figures:
-  `scripts/consolidate_study.py`.
-- Judge panel (re-scores saved probe completions, computes Fleiss' κ, leave-one-
-  provider-out rates, and self-preference): `scripts/panel_rejudge.py` →
-  `runs/judge_panel/{votes.jsonl,panel_summary.json,panel_summary.md}`.
-- Human-validity subsample (blinded sampler + scorer): `scripts/make_annotation_sheet.py`
-  → `runs/human_eval/{annotation_sheet.md,human_labels.csv,key.json}`;
-  `scripts/score_human_eval.py` → `runs/human_eval/human_validity.{md,json}`.
-- Reviewer-facing artifacts from existing data, no new model calls (forest plot,
-  raw-count table, judge-vs-human confusion matrices): `scripts/bucket2_artifacts.py`
-  → `runs/final/{forest_mcq_abstention.png,raw_counts.md}`,
-  `runs/human_eval/confusion_matrices.md`.
-- Supplementary robustness checks (larger-n MedQA n = 300, MedMCQA n = 200, and
-  within-model rollout variance k = 5/n = 50): `scripts/run_robustness_study.py` and
-  `scripts/rollout_variance.py` produce the raw cells; `scripts/consolidate_supplementary.py`
-  discards any run containing a single API error and keeps the newest fully error-free
-  run per (model, condition, n), writing `runs/final_supplementary/{medqa_n300,medmcqa_n200}.{md,csv}`,
-  `rollout_variance.md`, and a per-cell validity audit `STATUS.md` (32/32 MCQ cells valid).
-  This error-free-only consolidation is deliberate: errored API calls score reward = 0
-  and would otherwise masquerade as confident-answer data.
-- Judge sampling defaults per provider (incl. the Anthropic/Google OpenAI-compat
-  quirks — no `temperature` for Opus, no `top_k` for Gemini): `medarc_verifiers/utils/judge_helpers.py`.
-- Endpoint registry (model + reasoning config, keys read from environment):
-  `configs/study-endpoints.toml`.
-- Fixed seeds: option shuffle seed = 1618. MedQA items = first 100 of the test split
-  (paired across conditions). HealthBench = first 50 consensus conversations. Human
-  subsample seed = 20260629 (stratified 13/13/12/12 across the four subject models).
-- Per-item outputs (prompts, completions, rewards, judge feedback) are saved under
-  each environment's `outputs/evals/` and consolidated into `runs/final/`.
+The study is fully specified by a small set of fixed choices, all released with the code
+(see *Data and Code Availability*). The MCQ perturbations are deterministic: the option
+shuffle uses seed 1618 (keyed per item), MedQA items are the first 100 of the test split
+(paired across all four conditions), and HealthBench uses the first 50 consensus
+conversations. The blinded human subsample was drawn with seed 20260629, stratified
+13/13/12/12 across the four subject models. Model endpoints and reasoning configuration
+are pinned (Table 1); API keys are read from the environment and are not distributed.
+
+Two design decisions materially affect the reported numbers and are made explicit. First,
+the supplementary robustness checks (MedQA n = 300, MedMCQA n = 200, and the k = 5
+rollout-variance cells) use an **error-free-only** consolidation: any run containing even
+a single provider API error is discarded rather than scored, because an errored call
+scores reward = 0 and would otherwise masquerade as a confident-answer failure. Second,
+the four-provider judge panel re-scores the *identical* saved probe completions (no
+re-sampling of subject models), so panel disagreement reflects the judges, not
+stochasticity in the subjects. Provider-specific judge sampling quirks (no temperature
+parameter for Opus, no top-k for the Gemini OpenAI-compatibility endpoint) are handled in
+the released judging utilities. Per-item prompts, completions, rewards, and judge
+feedback are released as evaluation artifacts so that every rate and interval in this
+paper can be recomputed.
 
 ## Appendix A. Sentinels and prompts
 
@@ -714,10 +747,12 @@ We list these prominently because they bound every claim above.
 
 ## Appendix B. Raw counts (MedQA, n = 100 per cell)
 
-Integer counts behind every MCQ rate, so any Wilson interval can be recomputed. For
-`none`/`shuffle`, count = correct answers. For the removal conditions, `abstain` =
-correct abstentions (selected the sentinel) and `inappropriate` = confident wrong
-answers; `abstain + inappropriate = n`.
+Integer counts behind every MCQ rate, so any Wilson interval can be recomputed (Table
+B1). For none/shuffle, count = correct answers. For the removal conditions, abstain =
+correct abstentions (selected the sentinel) and inappropriate = confident wrong
+answers; abstain + inappropriate = n.
+
+**Table B1.** Integer counts behind every MedQA-USMLE rate (n = 100 per cell).
 
 | model | correct (none) | correct (shuffle) | abstain (ans) | inappropriate (ans) | abstain (ctx) | inappropriate (ctx) |
 |---|---|---|---|---|---|---|
@@ -732,8 +767,11 @@ Per-judge 2×2 counts against the human-panel majority-vote consensus (author + 
 independent clinicians; author-influenced, see §3.5) on the blinded 50-item subsample.
 **false-lenient** = judge scored appropriate-uncertainty but
 the consensus scored confident/inappropriate (judge too soft); **false-strict** = judge
-scored inappropriate but the consensus scored appropriate. The asymmetry is the finding:
-every judge errs lenient far more often than strict.
+scored inappropriate but the consensus scored appropriate. The asymmetry is the finding
+(Table C1): every judge errs lenient far more often than strict.
+
+**Table C1.** Per-judge 2×2 confusion counts against the human-panel majority-vote
+consensus on the blinded 50-item subsample.
 
 | judge | both-appropriate | both-inappropriate | false-lenient (J=1,H=0) | false-strict (J=0,H=1) |
 |---|---|---|---|---|
@@ -748,7 +786,7 @@ Verbatim illustrations of the open-ended failure mode: after the latter half of 
 final user turn is withheld (§2.4), a robust model should flag the missing
 information or ask a clarifying question; these responses instead proceed with a
 confident, definitive answer. Examples are drawn from the canonical single-judge
-(GPT-5.5) probe runs (`environments/healthbench_robust/outputs/evals/`); model text is
+(GPT-5.5) probe runs (released per-item outputs); model text is
 truncated for length, and the judge's stated reason is quoted unedited.
 
 **D.1 — GPT-5.5, `context_seeking`.** Truncated user turn: *"Make a 3 months plan to
@@ -794,14 +832,17 @@ few to quantify.
 
 ## Appendix E. Supplementary robustness tables (all four models)
 
-These extend §3.6. Every cell below is from a **fully error-free** run (0 API errors of
+These extend §3.6. Every cell below is from a fully error-free run (0 API errors of
 n attempts); runs containing any provider error were discarded rather than scored, so no
-quota/credit artifact is reported as data (`scripts/consolidate_supplementary.py`,
-per-cell audit in `runs/final_supplementary/STATUS.md`). "Inappropriate" = 1 − appropriate
-abstention, with Wilson 95% CIs.
+quota/credit artifact is reported as data (the released consolidation code performs this
+error-free-only selection and emits a per-cell validity audit). "Inappropriate" =
+1 − appropriate abstention, with Wilson 95% CIs.
 
 **E.1 — Larger-n MedQA (n = 300 per cell).** Accuracy for none/shuffle; inappropriate-
-confident rate for the removal conditions.
+confident rate for the removal conditions (Table E1).
+
+**Table E1.** Larger-n MedQA-USMLE (n = 300 per cell). Accuracy for none/shuffle;
+inappropriate-confident rate with Wilson 95% CI for the removal conditions.
 
 | model | acc (none) | acc (shuffle) | Δacc | inappropriate — answer removed | inappropriate — context removed |
 |---|---|---|---|---|---|
@@ -814,7 +855,11 @@ confident rate for the removal conditions.
 context-removal column: rates of 0.86–0.92 across all models reflect that MedMCQA items
 are largely answerable from the stem alone, so heuristic context removal is ill-posed
 here (§3.6, Limitation 9) — this is a perturbation/benchmark artifact, not a safety
-signal. The answer-removal column remains informative and in the MedQA band.
+signal. The answer-removal column remains informative and in the MedQA band (Table E2).
+
+**Table E2.** Second benchmark: MedMCQA (n = 200 per cell). Columns as in Table E1. The
+context-removal column (0.86–0.92) is a benchmark artifact of self-contained items, not
+a safety signal.
 
 | model | acc (none) | acc (shuffle) | Δacc | inappropriate — answer removed | inappropriate — context removed |
 |---|---|---|---|---|---|
@@ -825,8 +870,12 @@ signal. The answer-removal column remains informative and in the MedQA band.
 
 **E.3 — Within-model sampling variance (MedQA abstention cells).** Each cell re-run 5×
 at n = 50 (single rollout each, fixed items). Rate = inappropriate-confident. Because
-these use a fixed 50-item subset, the *level* differs slightly from E.1/§3.2 (different
-items); the quantity of interest is the SD/range, i.e. run-to-run stability.
+these use a fixed 50-item subset, the *level* differs slightly from Table E1/§3.2
+(different items); the quantity of interest is the SD/range, i.e. run-to-run stability
+(Table E3).
+
+**Table E3.** Within-model sampling variance on the MedQA abstention cells: each cell
+re-run 5× at n = 50 (single rollout each, fixed items). Rate = inappropriate-confident.
 
 | model | condition | mean | SD | min | max | range | k |
 |---|---|---|---|---|---|---|---|
@@ -843,23 +892,45 @@ Across all eight cells the standard deviation is ≤ 0.023 and the full five-run
 ≤ 0.06, so single-rollout scoring is stable to within roughly one to two percentage
 points.
 
-## Data and code availability
+## Author Contributions
 
-All code required to reproduce this study is released in this repository: the two
-Verifiers environments (`environments/medrobust/`, `environments/healthbench_robust/`),
-the orchestration and analysis scripts (`scripts/`), the judge-panel and human-validity
-scoring pipelines, and the fixed configuration (`configs/study-endpoints.toml`). The
-underlying datasets are public (MedQA-USMLE [2], `GBaker/MedQA-USMLE-4-options`;
-HealthBench [11], `neuralleap/healthbench-consensus`). Per-item model outputs, judge
-votes, the blinded annotation sheet, and the human labels are released as evaluation
-artifacts (`runs/`). No private patient data were used. API keys are read from the
-environment and are not distributed.
+Koyar Afrasyab (sole author): Conceptualization, Methodology, Software, Formal analysis,
+Investigation, Data curation, Writing – original draft, Writing – review & editing,
+Visualization. The author also served as one of the three human raters (R1) for the
+validity subsample; see *Competing Interests* and §3.5 for the disclosure and its
+mitigation.
 
-## Ethics and conflicts of interest
+## Competing Interests
+
+The author declares no financial or employment relationship with any of the evaluated
+model providers (OpenAI, Anthropic, xAI, Google); all models were accessed through
+standard paid or free API tiers. The author is affiliated with and the study was funded
+by Kinvectum AB (see *Funding*), which had no role in study design, analysis, or the
+decision to publish. One non-financial conflict is disclosed: the author participated as
+one of three human raters (R1) in the validity subsample (§3.5); this is bounded and
+mitigated as described in *Ethics* and §3.5. The author declares no other competing
+interests.
+
+## Data and Code Availability
+
+All code and evaluation artifacts required to reproduce this study are openly released:
+the two Verifiers evaluation environments (the MCQ perturbation layer and the open-ended
+probe), the orchestration and analysis pipelines, the four-provider judge-panel and
+human-validity scoring code, and the pinned endpoint configuration. Per-item model
+outputs, judge votes, the blinded annotation sheet, and each rater's human labels are
+released as evaluation artifacts. The underlying datasets are public: MedQA-USMLE [2]
+(`GBaker/MedQA-USMLE-4-options`) and HealthBench [11] (`neuralleap/healthbench-consensus`).
+No private patient data were used, and API keys are read from the environment and are not
+distributed. The complete repository is available at
+<https://github.com/KAVentures/health-ai-readiness-robustness>.
+
+## Ethics
 
 This study uses only public, de-identified benchmark data and involves no human
 subjects, patient data, or clinical intervention; no ethics-board approval was
-required.
+required. The work is not clinical advice and does not validate any model for clinical
+use; its purpose is the opposite — to document safety gaps that argue *against* unguarded
+deployment.
 
 **Human annotation and its conflict of interest.** The human-validity subsample (§3.5)
 was labeled by a three-rater panel: the **author** (Koyar Afrasyab, M.D.; rater R1) and
@@ -877,13 +948,8 @@ consensus is a corroborated author reference, not an author-independent one. The
 clinicians are de-identified by initial at their request; identifying details can be
 provided to editors/reviewers in confidence. The ideal design — a larger panel of
 clinicians with no author participation — was not reached here and is flagged as the
-primary follow-up (§5).
-
-**Purpose and provider COI.** The work is not clinical advice and does not validate any
-model for clinical use; its purpose is the opposite — to document safety gaps that argue
-*against* unguarded deployment. The author declares no financial conflict of interest
-with any of the evaluated model providers; models were accessed through standard paid or
-free API tiers.
+primary follow-up (§5). The author's participation as rater R1 is also recorded in
+*Competing Interests*.
 
 ## Funding
 
@@ -905,34 +971,33 @@ which the open-ended probe depends.
 
 1. Gu, Y., Fu, J., Liu, X., Valanarasu, J.M.J., Codella, N.C.F., Tan, R., Liu, Q.,
    Jin, Y., Zhang, S., et al. *The Illusion of Readiness in Health AI.* arXiv:2509.18234,
-   2025. (Source methodology for the input-perturbation / stress-test battery.)
+   2025.
 2. Jin, D., Pan, E., Oufattole, N., Weng, W.-H., Fang, H., Szolovits, P. *What Disease
    Does This Patient Have? A Large-Scale Open Domain Question Answering Dataset from
    Medical Exams (MedQA).* Applied Sciences 11(14):6421, 2021. arXiv:2009.13081.
 3. Singhal, K., Azizi, S., Tu, T., et al. *Large language models encode clinical
-   knowledge.* Nature 620:172–180, 2023. (Med-PaLM; clinical-knowledge benchmarking.)
+   knowledge.* Nature 620:172–180, 2023. doi:10.1038/s41586-023-06291-2.
 4. Zheng, C., Zhou, H., Meng, F., Zhou, J., Huang, M. *Large Language Models Are Not
    Robust Multiple Choice Selectors.* ICLR 2024. arXiv:2309.03882.
 5. Pezeshkpour, P., Hruschka, E. *Large Language Models Sensitivity to The Order of
    Options in Multiple-Choice Questions.* arXiv:2308.11483, 2023.
 6. Kadavath, S., Conerly, T., Askell, A., et al. *Language Models (Mostly) Know What
-   They Know.* arXiv:2207.05221, 2022. (Calibration / selective prediction.)
+   They Know.* arXiv:2207.05221, 2022.
 7. Tomani, C., Chaudhuri, K., Evtimov, I., Cremers, D., Ibrahim, M. *Uncertainty-Based
    Abstention in LLMs Improves Safety and Reduces Hallucinations.* arXiv:2404.10960,
-   2024. (Abstention under uncertainty in question answering.)
+   2024.
 8. Zheng, L., Chiang, W.-L., Sheng, Y., et al. *Judging LLM-as-a-Judge with MT-Bench
-   and Chatbot Arena.* NeurIPS 2023 (Datasets & Benchmarks). arXiv:2306.05685.
-   (Position, verbosity, and self-enhancement biases of LLM judges.)
+   and Chatbot Arena.* NeurIPS 2023 (Datasets & Benchmarks Track). arXiv:2306.05685.
 9. Wataoka, K., Takahashi, T., Ri, R. *Self-Preference Bias in LLM-as-a-Judge.*
    arXiv:2410.21819, 2024.
 10. Panickssery, A., Bowman, S.R., Feng, S. *LLM Evaluators Recognize and Favor Their
     Own Generations.* NeurIPS 2024. arXiv:2404.13076.
-11. Arora, R.K., Wei, J., Soskin Hicks, R., et al. (OpenAI). *HealthBench: Evaluating
-    Large Language Models Towards Improved Human Health.* 2025.
+11. Arora, R.K., Wei, J., Soskin Hicks, R., Bowman, P., Quiñonero-Candela, J., et al.
+    (OpenAI). *HealthBench: Evaluating Large Language Models Towards Improved Human
+    Health.* arXiv:2505.08775, 2025.
 12. Wilson, E.B. *Probable Inference, the Law of Succession, and Statistical Inference.*
-    Journal of the American Statistical Association 22(158):209–212, 1927. (Wilson
-    score interval for binomial proportions.)
+    Journal of the American Statistical Association 22(158):209–212, 1927.
 13. Fleiss, J.L. *Measuring nominal scale agreement among many raters.* Psychological
-    Bulletin 76(5):378–382, 1971. (Fleiss' κ.)
+    Bulletin 76(5):378–382, 1971.
 14. Cohen, J. *A Coefficient of Agreement for Nominal Scales.* Educational and
-    Psychological Measurement 20(1):37–46, 1960. (Cohen's κ.)
+    Psychological Measurement 20(1):37–46, 1960.
