@@ -1,14 +1,14 @@
-# Who Judges Medical AI? Judge Self-Preference and Human Leniency Confound LLM-Graded Safety
+# Evaluating Medical AI Under Missing Information: Same-Provider Judges and Human Raters Change Apparent Safety
 
-**A robustness stress-test of frontier models on medical QA — used to show that the LLM *judge*, not just the model, is a first-order confound in open-ended medical-AI safety evaluation.** A benchmark-agnostic re-implementation and text-modality extension of the Health-AI input-perturbation methodology, applied to three flagship reasoning models plus one mid-tier model.
+**A missing-information stress-test of frontier models on open-ended medical conversation, showing that the LLM *judge* — its provider and its calibration against clinicians — is part of the measurement.** The closed-ended MedQA/MedMCQA battery serves as an anchor.
 
 Author: **Koyar Afrasyab, M.D.**
 Affiliation: **Kinvectum AB**
 Funding: **Kinvectum AB**
 
-This repository contains the manuscript, evaluation environments, orchestration/judging/scoring code, saved analysis tables, figures, judge-panel votes, and human-annotation data for a robustness study of frontier LLMs on medical question answering. It **re-implements and extends** the input-perturbation methodology of Gu et al., *The Illusion of Readiness in Health AI* (arXiv:2509.18234, 2025), as an open-source evaluation layer on top of the [MedARC-AI/medmarks](https://github.com/MedARC-AI/medmarks) harness.
+This repository contains the manuscript, evaluation environments, orchestration/judging/scoring code, saved analysis tables, figures, judge-panel votes, the perturbation-validity audit, and human-annotation data. It extends the input-perturbation methodology of Gu et al., *Evaluating the robustness and readiness of large frontier models in health AI applications* (Nature Medicine 2026; preprint arXiv:2509.18234) from closed-ended/multimodal tasks to **open-ended clinical conversation under missing information**, on top of the [MedARC-AI/medmarks](https://github.com/MedARC-AI/medmarks) harness.
 
-This is a **methodology re-implementation and model update on text-modality benchmarks**, not a full reproduction of the original multimodal study: it re-uses the original's perturbation logic (option shuffling, answer removal, context removal) and adds an open-ended abstention probe, a four-provider LLM judge panel, and a three-rater human-validity check (the author plus two independent clinicians), while deliberately excluding the original study's image-based components. The robustness re-run is the substrate; the **judge-bias analysis — self-preference and human leniency — is the new contribution.**
+The primary contribution is the open-ended missing-information probe and its **evaluator analysis**: a four-provider LLM-judge panel (with same-provider preference separated from general judge severity), a clinician-anchored validity check (two independent clinicians co-primary, plus the author), and a perturbation-validity audit. Two evaluator-facing findings: **judge choice materially changes apparent safety**, and **LLM judges are more permissive than clinicians**. The closed-ended MedQA/MedMCQA results (with paired/equivalence statistics) anchor that accuracy is high and the safety gap is about calibration, not knowledge.
 
 ## Quick Links
 
@@ -178,8 +178,8 @@ Benchmark sources: MedQA (Jin et al., 2021), MedMCQA (Pal et al., 2022), and Hea
 If you use this work, please cite both this repository and the original Gu et al. study it re-implements.
 
 ```bibtex
-@misc{afrasyab2026whojudges,
-  title  = {Who Judges Medical AI? Judge Self-Preference and Human Leniency Confound LLM-Graded Safety},
+@misc{afrasyab2026missinginfo,
+  title  = {Evaluating Medical AI Under Missing Information: Same-Provider Judges and Human Raters Change Apparent Safety},
   author = {Afrasyab, Koyar},
   year   = {2026},
   howpublished = {GitHub repository},

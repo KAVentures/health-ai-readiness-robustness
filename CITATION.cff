@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
-title: "Who judges medical AI? Judge self-preference and human leniency confound LLM-graded safety"
+title: "Evaluating medical AI under missing information: same-provider judges and human raters change apparent safety"
 authors:
   - family-names: Afrasyab
     given-names: Koyar
@@ -9,12 +9,16 @@ type: article
 year: 2026
 license: CC-BY-4.0
 abstract: >-
-  An open-source robustness stress-test of four frontier LLMs (Claude Opus 4.8,
-  GPT-5.5, Grok 4.3, Gemini 3.5 Flash) on medical question answering. It re-implements
-  and extends the input-perturbation methodology of Gu et al. (The Illusion of Readiness
-  in Health AI, arXiv:2509.18234) as a benchmark-agnostic evaluation layer, adds an
-  open-ended abstention probe, a four-provider LLM judge panel with self-preference
-  correction, and a three-clinician human-validity check.
+  An open-source study extending readiness stress-testing to open-ended medical
+  conversation under missing information, across four frontier LLMs (Claude Opus 4.8,
+  GPT-5.5, Grok 4.3, Gemini 3.5 Flash). It deletes clinical information from the final
+  user turn and grades the response with a four-provider LLM-judge panel and a blinded
+  clinician-anchored human reference. Two evaluator-facing findings: judge choice
+  materially changes apparent safety (moderate inter-judge reliability; a same-provider
+  preference that persists after adjusting for general judge severity), and LLM judges
+  are systematically more permissive than clinicians. A closed-ended MedQA/MedMCQA
+  anchor with paired statistics shows accuracy is high and option-order effects are
+  within a five-point equivalence margin for three of four models.
 references:
   - type: article
     title: "The Illusion of Readiness in Health AI"

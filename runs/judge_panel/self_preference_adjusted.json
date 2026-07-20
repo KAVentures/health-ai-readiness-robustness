@@ -1,0 +1,54 @@
+{
+  "n_votes": 798,
+  "did": {
+    "GPT-5.5": {
+      "own_on_self": 0.86,
+      "own_on_others": 0.8333333333333334,
+      "peer_on_self": 0.6978231292517006,
+      "peer_on_others": 0.7794104308390023,
+      "raw_self_pref": 0.16217687074829934,
+      "did_self_pref": 0.10825396825396827
+    },
+    "Opus 4.8": {
+      "own_on_self": 0.94,
+      "own_on_others": 0.7600000000000001,
+      "peer_on_self": 0.9199999999999999,
+      "peer_on_others": 0.7209070294784581,
+      "raw_self_pref": 0.020000000000000018,
+      "did_self_pref": -0.01909297052154202
+    },
+    "Grok 4.3": {
+      "own_on_self": 0.7346938775510204,
+      "own_on_others": 0.7111564625850341,
+      "peer_on_self": 0.7866666666666667,
+      "peer_on_others": 0.8044444444444444,
+      "raw_self_pref": -0.05197278911564629,
+      "did_self_pref": 0.04131519274376405
+    },
+    "Gemini 3.5 Flash": {
+      "own_on_self": 0.72,
+      "own_on_others": 0.7666666666666666,
+      "peer_on_self": 0.6666666666666666,
+      "peer_on_others": 0.8275736961451248,
+      "raw_self_pref": 0.053333333333333344,
+      "did_self_pref": 0.11424036281179151
+    }
+  },
+  "shared_same_provider_logodds": 0.3503989955865994,
+  "shared_ci95": [
+    0.15872637102055884,
+    0.5619915991207726
+  ],
+  "gpt_same_provider_logodds": 0.5150571136725777,
+  "gpt_ci95": [
+    -0.10081179336417358,
+    1.3481551830143448
+  ],
+  "nongpt_same_provider_logodds": 0.29739318854377794,
+  "nongpt_ci95": [
+    0.10427850921844155,
+    0.5568669129029001
+  ],
+  "permutation_p_shared": 0.06446776611694154,
+  "gpt_prob_scale_effect_at_p0_070": 0.09614217612835163
+}

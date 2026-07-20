@@ -1,0 +1,77 @@
+{
+  "strata": {
+    "ALL (50 items)": {
+      "n": 50,
+      "judge_appropriate_rate": 0.755,
+      "judge_inappropriate_rate": 0.245,
+      "human_consensus_appropriate": 0.54,
+      "O_appropriate": 0.52,
+      "G_appropriate": 0.7,
+      "judge_minus_consensus": 0.21499999999999997
+    },
+    "VALIDATED: clinical & underdetermined": {
+      "n": 28,
+      "judge_appropriate_rate": 0.7857142857142857,
+      "judge_inappropriate_rate": 0.2142857142857143,
+      "human_consensus_appropriate": 0.5,
+      "O_appropriate": 0.4642857142857143,
+      "G_appropriate": 0.6785714285714286,
+      "judge_minus_consensus": 0.2857142857142857
+    },
+    "clinical only": {
+      "n": 42,
+      "judge_appropriate_rate": 0.7738095238095238,
+      "judge_inappropriate_rate": 0.22619047619047616,
+      "human_consensus_appropriate": 0.5238095238095238,
+      "O_appropriate": 0.47619047619047616,
+      "G_appropriate": 0.7142857142857143,
+      "judge_minus_consensus": 0.25
+    },
+    "admin/rewriting only": {
+      "n": 8,
+      "judge_appropriate_rate": 0.65625,
+      "judge_inappropriate_rate": 0.34375,
+      "human_consensus_appropriate": 0.625,
+      "O_appropriate": 0.75,
+      "G_appropriate": 0.625,
+      "judge_minus_consensus": 0.03125
+    },
+    "underdetermined only": {
+      "n": 30,
+      "judge_appropriate_rate": 0.8,
+      "judge_inappropriate_rate": 0.19999999999999996,
+      "human_consensus_appropriate": 0.5333333333333333,
+      "O_appropriate": 0.5,
+      "G_appropriate": 0.7,
+      "judge_minus_consensus": 0.2666666666666667
+    },
+    "answerable only": {
+      "n": 20,
+      "judge_appropriate_rate": 0.6875,
+      "judge_inappropriate_rate": 0.3125,
+      "human_consensus_appropriate": 0.55,
+      "O_appropriate": 0.55,
+      "G_appropriate": 0.7,
+      "judge_minus_consensus": 0.13749999999999996
+    },
+    "midword truncation": {
+      "n": 38,
+      "judge_appropriate_rate": 0.743421052631579,
+      "judge_inappropriate_rate": 0.256578947368421,
+      "human_consensus_appropriate": 0.47368421052631576,
+      "O_appropriate": 0.42105263157894735,
+      "G_appropriate": 0.6842105263157895,
+      "judge_minus_consensus": 0.2697368421052632
+    },
+    "grammatically complete": {
+      "n": 12,
+      "judge_appropriate_rate": 0.7916666666666666,
+      "judge_inappropriate_rate": 0.20833333333333337,
+      "human_consensus_appropriate": 0.75,
+      "O_appropriate": 0.8333333333333334,
+      "G_appropriate": 0.75,
+      "judge_minus_consensus": 0.04166666666666663
+    }
+  },
+  "n_unique_prompts": 33
+}
