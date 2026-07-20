@@ -1,0 +1,426 @@
+{
+  "aggregation_vs_clinicians": {
+    "GPT-5.5 alone": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.64,
+        "kappa": 0.2598684210526315,
+        "balanced_acc": 0.6266025641025641,
+        "false_lenient": 17,
+        "false_strict": 1
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.78,
+        "kappa": 0.39560439560439564,
+        "balanced_acc": 0.6714285714285715,
+        "false_lenient": 9,
+        "false_strict": 2
+      }
+    },
+    "Opus 4.8 alone": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.64,
+        "kappa": 0.26229508196721313,
+        "balanced_acc": 0.6282051282051282,
+        "false_lenient": 16,
+        "false_strict": 2
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.78,
+        "kappa": 0.4210526315789476,
+        "balanced_acc": 0.6904761904761905,
+        "false_lenient": 8,
+        "false_strict": 3
+      }
+    },
+    "Grok 4.3 alone": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.78,
+        "kappa": 0.5542949756888169,
+        "balanced_acc": 0.7740384615384616,
+        "false_lenient": 9,
+        "false_strict": 2
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.76,
+        "kappa": 0.4495412844036698,
+        "balanced_acc": 0.7333333333333334,
+        "false_lenient": 5,
+        "false_strict": 7
+      }
+    },
+    "Gemini 3.5 Flash alone": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.72,
+        "kappa": 0.42996742671009763,
+        "balanced_acc": 0.7115384615384616,
+        "false_lenient": 12,
+        "false_strict": 2
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.7,
+        "kappa": 0.2718446601941747,
+        "balanced_acc": 0.6333333333333333,
+        "false_lenient": 8,
+        "false_strict": 7
+      }
+    },
+    "majority>=2/4": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.66,
+        "kappa": 0.3021346469622332,
+        "balanced_acc": 0.6474358974358975,
+        "false_lenient": 16,
+        "false_strict": 1
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.76,
+        "kappa": 0.3548387096774194,
+        "balanced_acc": 0.6571428571428571,
+        "false_lenient": 9,
+        "false_strict": 3
+      }
+    },
+    "supermajority>=3/4": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.7,
+        "kappa": 0.3902439024390243,
+        "balanced_acc": 0.6923076923076923,
+        "false_lenient": 12,
+        "false_strict": 3
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.72,
+        "kappa": 0.3333333333333333,
+        "balanced_acc": 0.6666666666666667,
+        "false_lenient": 7,
+        "false_strict": 7
+      }
+    },
+    "unanimity 4/4": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.78,
+        "kappa": 0.555735056542811,
+        "balanced_acc": 0.7756410256410255,
+        "false_lenient": 8,
+        "false_strict": 3
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.72,
+        "kappa": 0.3805309734513273,
+        "balanced_acc": 0.7047619047619047,
+        "false_lenient": 5,
+        "false_strict": 9
+      }
+    },
+    "provider-excluded majority": {
+      "vs O": {
+        "n": 50,
+        "agree": 0.7,
+        "kappa": 0.3902439024390243,
+        "balanced_acc": 0.6923076923076923,
+        "false_lenient": 12,
+        "false_strict": 3
+      },
+      "vs G": {
+        "n": 50,
+        "agree": 0.72,
+        "kappa": 0.3333333333333333,
+        "balanced_acc": 0.6666666666666667,
+        "false_lenient": 7,
+        "false_strict": 7
+      }
+    }
+  },
+  "calibration": {
+    "vs O": {
+      "0": [
+        6,
+        0.0
+      ],
+      "1": [
+        3,
+        0.3333333333333333
+      ],
+      "2": [
+        6,
+        0.3333333333333333
+      ],
+      "3": [
+        4,
+        0.0
+      ],
+      "4": [
+        31,
+        0.7419354838709677
+      ]
+    },
+    "vs G": {
+      "0": [
+        6,
+        0.0
+      ],
+      "1": [
+        3,
+        1.0
+      ],
+      "2": [
+        6,
+        0.6666666666666666
+      ],
+      "3": [
+        4,
+        0.5
+      ],
+      "4": [
+        31,
+        0.8387096774193549
+      ]
+    },
+    "vs consensus": {
+      "0": [
+        6,
+        0.0
+      ],
+      "1": [
+        3,
+        0.6666666666666666
+      ],
+      "2": [
+        6,
+        0.3333333333333333
+      ],
+      "3": [
+        4,
+        0.25
+      ],
+      "4": [
+        31,
+        0.7096774193548387
+      ]
+    }
+  },
+  "disagreement_by_stratum": {
+    "determinacy=underdetermined": {
+      "n": 120,
+      "unanimity_rate": 0.875,
+      "mean_vote_entropy": 0.11241854163060887,
+      "mean_appropriate": 0.8125
+    },
+    "determinacy=answerable": {
+      "n": 80,
+      "unanimity_rate": 0.65,
+      "mean_vote_entropy": 0.3028195311147832,
+      "mean_appropriate": 0.73125
+    },
+    "task_type=clinical": {
+      "n": 168,
+      "unanimity_rate": 0.8273809523809523,
+      "mean_vote_entropy": 0.15127550217097338,
+      "mean_appropriate": 0.8169642857142857
+    },
+    "task_type=admin": {
+      "n": 32,
+      "unanimity_rate": 0.5625,
+      "mean_vote_entropy": 0.3844219725041312,
+      "mean_appropriate": 0.5859375
+    },
+    "trunc_form=midword": {
+      "n": 136,
+      "unanimity_rate": 0.8602941176470589,
+      "mean_vote_entropy": 0.1216662913085936,
+      "mean_appropriate": 0.7886029411764706
+    },
+    "trunc_form=complete": {
+      "n": 64,
+      "unanimity_rate": 0.625,
+      "mean_vote_entropy": 0.33076831042010924,
+      "mean_appropriate": 0.76171875
+    },
+    "ALL": {
+      "n": 200,
+      "unanimity_rate": 0.785,
+      "mean_vote_entropy": 0.18857893742427861,
+      "mean_appropriate": 0.78
+    }
+  },
+  "model_by_stratum": {
+    "all": {
+      "GPT-5.5": [
+        50,
+        0.18
+      ],
+      "Opus 4.8": [
+        50,
+        0.06
+      ],
+      "Grok 4.3": [
+        50,
+        0.2
+      ],
+      "Gemini 3.5 Flash": [
+        50,
+        0.28
+      ]
+    },
+    "validated (clinical & underdetermined)": {
+      "GPT-5.5": [
+        28,
+        0.10714285714285714
+      ],
+      "Opus 4.8": [
+        28,
+        0.03571428571428571
+      ],
+      "Grok 4.3": [
+        28,
+        0.17857142857142858
+      ],
+      "Gemini 3.5 Flash": [
+        28,
+        0.25
+      ]
+    },
+    "answerable": {
+      "GPT-5.5": [
+        20,
+        0.25
+      ],
+      "Opus 4.8": [
+        20,
+        0.1
+      ],
+      "Grok 4.3": [
+        20,
+        0.2
+      ],
+      "Gemini 3.5 Flash": [
+        20,
+        0.3
+      ]
+    },
+    "admin": {
+      "GPT-5.5": [
+        8,
+        0.375
+      ],
+      "Opus 4.8": [
+        8,
+        0.25
+      ],
+      "Grok 4.3": [
+        8,
+        0.25
+      ],
+      "Gemini 3.5 Flash": [
+        8,
+        0.5
+      ]
+    }
+  },
+  "shared_failure_dist": {
+    "0": 30,
+    "1": 9,
+    "2": 6,
+    "3": 5,
+    "4": 0
+  },
+  "n_prompts": 50,
+  "rank_points": {
+    "all 4 judges": {
+      "rates": {
+        "GPT-5.5": 0.26,
+        "Opus 4.8": 0.075,
+        "Grok 4.3": 0.225,
+        "Gemini 3.5 Flash": 0.32
+      },
+      "ranking_best_to_worst": [
+        "Opus 4.8",
+        "Grok 4.3",
+        "GPT-5.5",
+        "Gemini 3.5 Flash"
+      ]
+    },
+    "drop GPT-5.5": {
+      "rates": {
+        "GPT-5.5": 0.3,
+        "Opus 4.8": 0.08,
+        "Grok 4.3": 0.247,
+        "Gemini 3.5 Flash": 0.333
+      },
+      "ranking_best_to_worst": [
+        "Opus 4.8",
+        "Grok 4.3",
+        "GPT-5.5",
+        "Gemini 3.5 Flash"
+      ]
+    },
+    "drop Opus 4.8": {
+      "rates": {
+        "GPT-5.5": 0.273,
+        "Opus 4.8": 0.08,
+        "Grok 4.3": 0.227,
+        "Gemini 3.5 Flash": 0.333
+      },
+      "ranking_best_to_worst": [
+        "Opus 4.8",
+        "Grok 4.3",
+        "GPT-5.5",
+        "Gemini 3.5 Flash"
+      ]
+    },
+    "drop Grok 4.3": {
+      "rates": {
+        "GPT-5.5": 0.24,
+        "Opus 4.8": 0.067,
+        "Grok 4.3": 0.213,
+        "Gemini 3.5 Flash": 0.28
+      },
+      "ranking_best_to_worst": [
+        "Opus 4.8",
+        "Grok 4.3",
+        "GPT-5.5",
+        "Gemini 3.5 Flash"
+      ]
+    },
+    "drop Gemini 3.5 Flash": {
+      "rates": {
+        "GPT-5.5": 0.227,
+        "Opus 4.8": 0.073,
+        "Grok 4.3": 0.213,
+        "Gemini 3.5 Flash": 0.333
+      },
+      "ranking_best_to_worst": [
+        "Opus 4.8",
+        "Grok 4.3",
+        "GPT-5.5",
+        "Gemini 3.5 Flash"
+      ]
+    }
+  },
+  "boot_rank1": {
+    "GPT-5.5": 0.0,
+    "Opus 4.8": 0.9988,
+    "Grok 4.3": 0.0012,
+    "Gemini 3.5 Flash": 0.0
+  },
+  "boot_rank4": {
+    "GPT-5.5": 0.0972,
+    "Opus 4.8": 0.0,
+    "Grok 4.3": 0.0302,
+    "Gemini 3.5 Flash": 0.8726
+  }
+}

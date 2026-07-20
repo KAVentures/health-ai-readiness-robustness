@@ -76,12 +76,25 @@ def fleiss_kappa(mat):
     return (Pbar - Pe) / (1 - Pe) if Pe < 1 else 1.0
 
 
-def boot_ci(fn, *series, B=5000):
+def boot_ci(fn, *series, clusters=None, B=5000):
+    """Bootstrap CI. If `clusters` (one label per item) is given, resample whole
+    clusters (prompts) rather than individual items, because the 50 annotation items
+    arise from only 33 unique perturbed prompts and are not independent."""
+    series = [np.asarray(s) for s in series]
     n = len(series[0])
     vals = []
-    for _ in range(B):
-        idx = rng.integers(0, n, n)
-        vals.append(fn(*[np.asarray(s)[idx] for s in series]))
+    if clusters is None:
+        for _ in range(B):
+            idx = rng.integers(0, n, n)
+            vals.append(fn(*[s[idx] for s in series]))
+    else:
+        clusters = np.asarray(clusters)
+        uniq = np.array(sorted(set(clusters.tolist())))
+        members = {c: np.where(clusters == c)[0] for c in uniq}
+        for _ in range(B):
+            pick = uniq[rng.integers(0, len(uniq), len(uniq))]
+            idx = np.concatenate([members[c] for c in pick])
+            vals.append(fn(*[s[idx] for s in series]))
     lo, hi = np.percentile(vals, [2.5, 97.5])
     return float(lo), float(hi)
 
@@ -97,6 +110,8 @@ def main():
     r1 = np.array([R1[i] for i in ids])
     o = np.array([O[i] for i in ids])
     g = np.array([G[i] for i in ids])
+    clusters = np.array([key[i]["prompt_id"] for i in ids])  # 33 unique prompts across 50 items
+    n_uni = len(set(clusters.tolist()))
 
     # judge votes aligned to annotation ids
     jvote = {j: [] for j in JUDGES}
@@ -118,7 +133,8 @@ def main():
     # pairwise kappa + AC1 + CIs
     for name, a, b in [("R1-O", r1, o), ("R1-G", r1, g), ("O-G", o, g)]:
         k = cohen_kappa(a, b); ac = gwet_ac1(a, b)
-        kci = boot_ci(cohen_kappa, a, b); acci = boot_ci(gwet_ac1, a, b)
+        kci = boot_ci(cohen_kappa, a, b, clusters=clusters)
+        acci = boot_ci(gwet_ac1, a, b, clusters=clusters)
         res["pairwise"][name] = dict(raw_agree=float(np.mean(a == b)), cohen_kappa=k,
                                      kappa_ci=kci, gwet_ac1=ac, ac1_ci=acci)
 
@@ -135,8 +151,15 @@ def main():
             for arr in (r1, o, g):
                 m[row, arr[idx]] += 1
         return fleiss_kappa(m)
-    fk_ci = np.percentile([fleiss_from_idx(rng.integers(0, len(ids), len(ids))) for _ in range(5000)],
-                          [2.5, 97.5])
+    # prompt-clustered bootstrap for Fleiss CI
+    uni = np.array(sorted(set(clusters.tolist())))
+    memb = {c: np.where(clusters == c)[0] for c in uni}
+    fk_samples = []
+    for _ in range(5000):
+        pick = uni[rng.integers(0, len(uni), len(uni))]
+        sel = np.concatenate([memb[c] for c in pick])
+        fk_samples.append(fleiss_from_idx(sel))
+    fk_ci = np.percentile(fk_samples, [2.5, 97.5])
     res["fleiss"] = dict(kappa=float(fk), ci=[float(fk_ci[0]), float(fk_ci[1])])
 
     # author-influenced majority consensus (R1,O,G) — no ties with 3 raters
@@ -152,15 +175,18 @@ def main():
         for ref_name, ref in [("R1_author", r1), ("O", o), ("G", g),
                               ("consensus_author_infl", consensus)]:
             d = float(np.mean(jv[mask]) - np.mean(ref[mask]))
-            ci = boot_ci(rate_diff, jv[mask], ref[mask])
+            ci = boot_ci(rate_diff, jv[mask], ref[mask], clusters=clusters[mask])
             k = cohen_kappa(jv[mask], ref[mask])
-            kci = boot_ci(cohen_kappa, jv[mask], ref[mask])
+            kci = boot_ci(cohen_kappa, jv[mask], ref[mask], clusters=clusters[mask])
             entry[ref_name] = dict(rate_diff=d, rate_diff_ci=ci, kappa=k, kappa_ci=kci)
         res["judge_vs_human"][JNICE[j]] = entry
 
     OUT_JSON.write_text(json.dumps(res, indent=2))
 
     L = ["# Strengthened human-reference analysis (50 items, raters R1/O/G)\n"]
+    L.append(f"All bootstrap CIs are **prompt-clustered** (resampling the {n_uni} unique "
+             f"perturbed prompts underlying the 50 annotation items), which is more conservative "
+             f"than resampling items independently.\n")
     L.append(f"Rater appropriate-uncertainty rates: R1 (author) {r1.mean():.2f}, "
              f"O {o.mean():.2f}, G {g.mean():.2f}. Author-influenced majority consensus "
              f"{consensus.mean():.2f}.\n")
@@ -187,10 +213,13 @@ def main():
         L.append(f"| {jn} | {e['judge_rate']:.2f} | {cell(e['O'])} | {cell(e['G'])} | "
                  f"{cell(e['consensus_author_infl'])} |")
     L.append("")
-    L.append("Every point estimate is positive (all four judges more lenient than both "
-             "independent clinicians and the consensus); where a paired CI crosses zero the "
-             "leniency is directional but not individually separable at n=50. The conclusion "
-             "that judges skew lenient does not depend on the author's labels.\n")
+    L.append("All four judges are significantly more lenient than the stricter clinician O and "
+             "than the author-influenced consensus (paired CIs exclude zero). Against the more "
+             "lenient clinician G the gap shrinks: only GPT-5.5 clearly separates, and Grok is "
+             "even slightly stricter than G (point estimate -0.04, CI crosses zero). So the "
+             "leniency conclusion holds firmly against the stricter clinician and the consensus, "
+             "is weaker against the most lenient clinician, and does not depend on the author's "
+             "labels.\n")
     OUT_MD.write_text("\n".join(L))
     print("\n".join(L))
 

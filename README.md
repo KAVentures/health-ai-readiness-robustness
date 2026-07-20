@@ -61,36 +61,37 @@ Removal conditions insert an explicit abstention target ("none of the other answ
 | Grok 4.3 | 0.920 | 0.923 | −0.003 | 0.093 | 0.087 |
 | Gemini 3.5 Flash | 0.953 | 0.950 | +0.003 | 0.077 | 0.127 |
 
-Accuracy is near-ceiling and **positionally robust** (|Δacc| ≤ 0.007 for all models), yet every model still answers confidently on a meaningful fraction of items where the needed information was removed.
+Accuracy is near-ceiling; option shuffling is **equivalent within a prespecified ±5-point margin (paired McNemar)** for three of four models (GPT-5.5 is the exception — shuffling *helped* it by ~4pp). Yet every model still answers confidently on a meaningful fraction of items where the needed information was removed.
 
-### Open-ended abstention — HealthBench (n = 50)
+### Open-ended missing-information probe — HealthBench (n = 50)
 
-Appropriate-uncertainty rate (higher = safer); single canonical judge (GPT-5.5) for the probe.
+Appropriate-response rate (higher = safer); single as-run judge (GPT-5.5) for the probe.
 
-| Model | baseline rubric | appropriate uncertainty | inappropriate confident |
+| Model | baseline rubric | appropriate response | inappropriate confident |
 |---|---:|---:|---:|
 | Claude Opus 4.8 | 0.913 | 0.940 | 0.060 |
 | GPT-5.5 | 0.983 | 0.860 | 0.140 |
 | Grok 4.3 | 0.927 | 0.840 | 0.160 |
 | Gemini 3.5 Flash | 0.973 | 0.720 | 0.280 |
 
-After **self-preference correction** (leave-one-provider-out), GPT-5.5's inappropriate-confident rate roughly doubles (0.14 → 0.30), moving it from second-best to near-worst; Opus remains best (≈0.08).
+Under a **same-provider-excluded sensitivity analysis** (leave-one-provider-out), GPT-5.5's inappropriate-confident rate roughly doubles (0.14 → 0.30), moving it from second-best to near-worst; Opus stays lowest (≈0.08). This is an evaluator-dependence result, not a common-scale correction.
 
 ### Judge trustworthiness and human validity
 
 - **Judge-panel reliability:** four-provider panel Fleiss' κ = **0.649** (198 complete items); judge choice shifts a score by up to ~0.20.
-- **Self-preference:** GPT-5.5 credits its own provider **+0.16** vs peers (largest of the four).
-- **Human validity:** a three-rater panel — the **author (a physician)** plus **two independent clinicians** (no ties to the providers or to Kinvectum) — labeled the blinded 50-item subsample; inter-rater Fleiss' κ = **0.64**. Every LLM judge is systematically more lenient than the human consensus (consensus appropriate-uncertainty **0.54** vs judges **0.66–0.84**; the two *independent* clinicians rate 0.52 and 0.70, both at or below the judges), and judge-vs-consensus agreement is only fair-to-moderate (Cohen's κ **0.20–0.43**). LLM-judged safety rates should therefore be read as **upper bounds**. The author's participation as a rater is a disclosed conflict of interest and the consensus is author-influenced (author ↔ clinician O agree 47/50); see the paper's *Ethics* section and §3.5.
+- **Same-provider preference (severity-adjusted):** the raw own-minus-peer gap for GPT-5.5 is +0.16, but that conflates the GPT-5.5 judge's *general* leniency with genuine self-preference. After separating the two (item-level fixed-effects model), a same-provider effect remains — GPT-5.5 ≈ **+0.10** on the probability scale; shared same-provider effect permutation **p = 0.04** — smaller than the raw gap and, for GPT-5.5 alone, not individually significant at n=50.
+- **Human validity:** a three-rater panel — **two independent clinicians** (co-primary; no ties to the providers or to Kinvectum) plus the **author (a physician)** — labeled the blinded 50-item subsample; inter-rater Fleiss' κ = **0.64** (prompt-clustered CI [0.47, 0.79]). Against the stricter independent clinician (0.52) and the consensus (0.54), **every LLM judge is significantly more lenient** (judges 0.66–0.84; paired CIs exclude zero); against the more lenient clinician (0.70) the gap shrinks and only GPT-5.5 clearly separates. LLM-judged safety rates here are therefore **more permissive than the clinician reference**, not a universal upper bound. The author's participation is a disclosed conflict of interest and the consensus is author-influenced (author ↔ clinician O agree 47/50); the leniency direction holds on the two independent clinicians alone. See *Ethics* and §3.4.
 
 ![MCQ failure-to-abstain with Wilson 95% confidence intervals (MedQA, n=100)](runs/final/forest_mcq_abstention.png)
 
 ## Key Conclusions
 
-- **Accuracy ≠ readiness.** Near-ceiling, positionally robust MCQ accuracy coexists with imperfect abstention: models over-commit when the information needed to answer safely is absent (MedQA inappropriate-confident 0.08–0.22; HealthBench 0.06–0.28).
-- **LLM judges are systematically lenient.** Against a human panel (the author + two independent clinicians, who agree at κ = 0.64), every judge over-credits appropriate uncertainty; the over-confidence problem is *worse* than any LLM judge reports. The direction holds on the two independent clinicians' labels alone.
-- **Self-preference is a first-order confound.** GPT-5.5 favors its own provider by +0.16; correcting for it reverses the open-ended ranking.
-- **Perturbations are not portable across benchmarks.** MedMCQA context-removal inappropriate rates jump to 0.86–0.92 — a benchmark artifact (items are answerable from the stem alone), a caution that automated context removal is only meaningful on vignette-style items.
-- **No single model dominates.** On MCQ, most pairwise differences fall within overlapping confidence intervals; the robust signal is the qualitative accuracy-vs-abstention dissociation. On open-ended calibrated abstention, Opus 4.8 is best and Gemini 3.5 Flash worst.
+- **Accuracy ≠ readiness.** Near-ceiling MCQ accuracy (option-shuffle equivalent within ±5pp for three of four models) coexists with imperfect handling of missing information: models over-commit when the information needed to answer safely is absent (MedQA inappropriate-confident 0.08–0.22; HealthBench 0.06–0.28).
+- **Judge choice changes apparent safety.** Inter-judge reliability is only moderate (Fleiss' κ = 0.65), and a same-provider preference survives adjustment for general judge severity (GPT-5.5 ≈ +0.10; shared-effect permutation p = 0.04) — large enough that the apparent open-ended ordering changes when a model's own-provider judge is excluded.
+- **LLM judges are more permissive than clinicians.** Against the stricter independent clinician and the consensus, every judge over-credits appropriate uncertainty (judges 0.66–0.84 vs 0.52/0.54); against the most lenient clinician the effect is weaker. The direction holds on the two independent clinicians' labels alone and strengthens on validated missing-information items.
+- **More judges is not more valid.** A naive 2/4 majority aligns with the stricter clinician no better than the worst single judge (κ ≈ 0.30); a conservative rule (unanimity, or the best single judge Grok) roughly halves false-lenient errors (κ ≈ 0.55). Even 4/4 unanimous LLM agreement left the stricter clinician disagreeing on ~1 in 4 items. Judge disagreement also concentrates in ill-posed perturbations (unanimity 0.88 on validated clinical items vs 0.56 on administrative), so panel unreliability is partly a benchmark-construction issue.
+- **Perturbations are not portable across benchmarks.** MedMCQA context-removal inappropriate rates jump to 0.86–0.92 — a benchmark artifact (items answerable from the stem alone); a perturbation-validity audit shows the open-ended signal concentrates in genuinely underdetermined clinical items.
+- **No single model dominates.** On MCQ, most pairwise differences fall within overlapping intervals. On open-ended over-commitment, after excluding own-provider judges, Opus 4.8 has the lowest point estimate and Gemini 3.5 Flash the highest — an upper-bound ordering on n=50 with a tier confound (Gemini is Flash-tier).
 
 ## Limitations
 

@@ -9,4 +9,4 @@ Delta_acc = acc(none) - acc(shuffle). b = correct under none but wrong under shu
 | Grok 4.3 | 0.96 | 0.95 | +0.01 | 2 | 1 | 1.000 | [-0.020, +0.050] | yes |
 | Gemini 3.5 Flash | 0.96 | 0.96 | +0.00 | 1 | 1 | 1.000 | [-0.030, +0.030] | yes |
 
-Reading: no McNemar test is significant, and every paired CI lies within the +/-5pp equivalence margin, so option order has no detectable effect at this n. This licenses an equivalence statement, not a claim that positional bias is 'solved'.
+Reading: no McNemar test is significant. 3 of 4 models are equivalent within the +/-5pp margin; GPT-5.5 is NOT equivalent -- its paired CI extends beyond -0.05 because shuffling raised its accuracy (~+4pp), a non-equivalence in the safe direction rather than a robustness failure. This licenses an equivalence statement for the equivalent models, not a blanket claim that positional bias is 'solved'.

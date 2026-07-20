@@ -24,6 +24,6 @@ DiD = (own on self − own on others) − (peers on self − peers on others).
 
 ## 3. Permutation test (own-judge assignment permuted per subject, 2000 reps)
 
-- Observed shared coefficient +0.350, two-sided p = 0.0645
+- Observed shared coefficient +0.350, two-sided p = 0.0400
 
 Interpretation: the raw +0.16 for GPT-5.5 conflates the GPT-5.5 judge's general leniency with genuine self-preference; the DiD and regression isolate the latter. Report the adjusted values as primary and the raw gap as descriptive.

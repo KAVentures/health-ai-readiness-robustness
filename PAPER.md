@@ -24,12 +24,13 @@ and a blinded clinician-anchored human reference. Two results are robust and eva
 First, **judge choice materially changes apparent safety.** Inter-judge agreement is only
 moderate (Fleiss' κ = 0.65), and after separating a judge's general leniency from genuine
 preference for its own provider (item-level fixed-effects model), a same-provider effect
-remains (GPT-5.5 ≈ +0.10 on the probability scale; permutation p = 0.06), large enough that
-the apparent ordering of which model over-commits least changes when a model's own-provider
-judge is excluded. Second, **all four LLM judges are more permissive than clinicians** on a
-blinded 50-item subsample: they credit appropriate uncertainty on 66–84% of items versus
-52% for the stricter independent clinician and 54% for the panel consensus (paired
-differences positive for every judge; judge-vs-consensus κ = 0.20–0.43). An audit of the
+remains (shared effect permutation p = 0.04; GPT-5.5 ≈ +0.10 on the probability scale), large
+enough that the apparent ordering of which model over-commits least changes when a model's
+own-provider judge is excluded. Second, **LLM judges are more permissive than clinicians** on a
+blinded 50-item subsample: they credit appropriate uncertainty on 66–84% of items versus 52% for
+the stricter independent clinician and 54% for the panel consensus — every judge is significantly
+more lenient than the stricter clinician and the consensus (against the more lenient clinician the
+gap shrinks and only one judge separates); judge-vs-consensus κ = 0.20–0.43. An audit of the
 perturbations shows both findings *strengthen* when restricted to validated
 missing-information cases. A closed-ended MedQA anchor confirms that accuracy is high and
 option-order effects are within a ±5-point equivalence margin for three of four models, so
@@ -84,8 +85,8 @@ in this setting are optimistic relative to a human reference.
    and must be reported as such.
 3. **A clinician-anchored validity check** — a blinded 50-item human reference labeled by two
    independent clinicians (co-primary) plus the author, with bootstrap κ / Gwet's AC1 and
-   paired judge-minus-human intervals — showing LLM judges are uniformly more permissive than
-   clinicians in this subsample.
+   paired judge-minus-human intervals — showing LLM judges are more permissive than the
+   stricter clinician and the consensus in this subsample.
 4. **A closed-ended MedQA/MedMCQA anchor** with paired (McNemar / equivalence) statistics,
    confirming that accuracy is high and option order is within a ±5-point margin for three of
    four models, so the open-ended safety gap is a calibration failure, not a knowledge gap.
@@ -261,7 +262,7 @@ judgment). We address the first two with a panel and the third with a human subs
   conflates a judge's general leniency with genuine preference for its own provider. We fit an
   item-level fixed-effects logistic model over the 800-vote grid (subject fixed effects + judge
   fixed effects + a same-provider term), with an item-clustered bootstrap CI and a permutation
-  test that shuffles which judge is "own" per subject. We report a difference-in-differences
+  test that permutes, as a bijection, which judge is "own" across the four subjects. We report a difference-in-differences
   descriptive statistic alongside it (§3.3).
 - **Human validity subsample.** Because LLM judges share correlated errors, panel agreement
   establishes reliability but not validity. We drew a blinded, provider-balanced subsample of
@@ -273,7 +274,7 @@ judgment). We address the first two with a panel and the third with a human subs
   could not recruit a third external clinician, the author-influenced majority consensus is
   reported as a **secondary** reference and every judge is additionally compared against each
   independent clinician separately. We report human inter-rater reliability (pairwise Cohen's κ,
-  Gwet's AC1, and Fleiss' κ, all with item-bootstrap CIs) and, for each judge, paired
+  Gwet's AC1, and Fleiss' κ, all with prompt-clustered bootstrap CIs) and, for each judge, paired
   judge-minus-human rate differences with CIs.
 
 The judging design and its limitations are treated further in §5.
@@ -288,7 +289,7 @@ are scored on the **same 100 items**, we test them paired: exact McNemar plus a 
 CI on Δacc, and a two-one-sided equivalence test against a prespecified ±5-percentage-point
 margin (§3.5). Inter-rater reliability uses Fleiss' κ [13] and Cohen's κ [14], reported with
 Gwet's AC1 because κ is depressed by the high prevalence of "appropriate" labels; all κ/AC1
-carry item-bootstrap CIs. The same-provider effect is estimated by the fixed-effects model
+carry prompt-clustered bootstrap CIs (resampling the 33 unique prompts behind the 50 items). The same-provider effect is estimated by the fixed-effects model
 above with clustered-bootstrap CIs and a permutation p-value.
 
 **Prespecified vs post hoc.** The following were specified before data collection: the four
@@ -297,8 +298,10 @@ Wilson intervals; and the blinded human subsample. The following are **post hoc*
 response to review and labeled as such throughout: the four-provider panel and
 leave-one-provider-out analysis; the fixed-effects separation of same-provider preference from
 severity; the paired/equivalence MCQ statistics; Gwet's AC1 and bootstrap CIs on all κ; the
-perturbation-validity audit and its sensitivity analyses; and the MedMCQA / larger-n / rollout
-supplementary checks. Given n = 50–100 per cell we avoid formal NHST of every pairwise contrast;
+perturbation-validity audit and its sensitivity analyses; the judge-aggregation, panel-vote
+calibration, by-stratum disagreement, prompt-level shared-failure, and leave-one-judge-out
+rank-stability analyses (§3.3–3.4); and the MedMCQA / larger-n / rollout supplementary checks.
+Given n = 50–100 per cell we avoid formal NHST of every pairwise contrast;
 intervals are wide and most contrasts are not separable, so we report intervals and equivalence
 rather than point-estimate rankings. Each item is scored with a single rollout; we bound the
 resulting sampling variance by re-running the MedQA abstention cells five times each (§3.6,
@@ -339,6 +342,22 @@ appropriate-response rates; last column = judge minus author-influenced consensu
 | mid-word truncation | 38 | 0.26 | 0.47 | 0.42 | 0.68 | +0.27 |
 | grammatically complete | 12 | 0.21 | 0.75 | 0.83 | 0.75 | +0.04 |
 
+**Judge disagreement is concentrated in the ill-posed cases, not in genuine clinical
+uncertainty.** Extending the audit to all 50 probe prompts (200 votes) and measuring four-judge
+disagreement by stratum: on genuinely underdetermined items the judges are nearly unanimous
+(unanimity rate 0.88, mean vote entropy 0.11), whereas on still-answerable items (0.65 / 0.30)
+and administrative/rewriting tasks (0.56 / 0.38) they disagree far more; mid-word cuts (0.86)
+are more agreed-upon than grammatically complete ones (0.62). In other words, the evaluator
+unreliability of §3.3 is largely a *benchmark-construction* problem — judges agree well when the
+missing-information case is well-posed and diverge on the malformed or conceptually ambiguous
+ones — rather than intrinsic difficulty in judging clinical uncertainty.
+
+**The model ordering survives on the validated subset.** Computing each model's panel-majority
+inappropriate-confident rate within strata: on the validated clinical-underdetermined items,
+Opus 0.04, GPT-5.5 0.11, Grok 0.18, Gemini 0.25 (vs all-items 0.06 / 0.18 / 0.20 / 0.28), so
+Opus's advantage and Gemini's deficit are not artifacts of malformed or administrative cases
+(full stratum table released in the reproducibility artifacts).
+
 ### 3.2 Models over-commit in open-ended conversation
 
 All four models produce high-quality unperturbed answers (baseline rubric ≥ 0.91, judge
@@ -362,6 +381,14 @@ judged by GPT-4.1-mini (reference only); appropriate-response and its complement
 
 Under this single judge GPT-5.5 appears second-best. **That standing is not trustworthy**
 (§3.3): GPT-5.5 was judging its own outputs here.
+
+**Failures are partly shared, partly model-specific.** Because all four models answered the same
+50 truncated prompts, we can ask whether over-commitment is driven by a few universally hard
+prompts or is model-specific (panel-majority inappropriate). Of the 50 prompts, 30 defeated no
+model, 9 defeated exactly one, 6 defeated two, 5 defeated three, and **none defeated all four**.
+So there is a cluster of harder prompts, but no prompt is a universal trap — a meaningful share
+of each model's failures are its own, which is consistent with the model differences in §3.3
+being real rather than pure prompt difficulty.
 
 ### 3.3 Judge choice changes apparent safety
 
@@ -392,7 +419,7 @@ that nets out each judge's leniency on *other* subjects reduces GPT-5.5's self-p
 judge FE + same-provider term) gives a GPT-5.5-specific same-provider coefficient of **+0.52
 log-odds** (95% item-clustered bootstrap CI [−0.10, +1.35]), or about **+0.10 on the
 probability scale** at GPT-5.5's peer-judged baseline. A shared same-provider effect across all
-subjects is +0.35 log-odds (95% CI [+0.16, +0.56]; permutation p = 0.06). In words: a genuine
+subjects is +0.35 log-odds (95% CI [+0.16, +0.56]; permutation p = 0.04). In words: a genuine
 same-provider preference remains after removing general leniency, but it is smaller than the raw
 +0.16 and, for GPT-5.5 specifically, not individually significant at n = 50 — so we present it
 as a real but modest, and not fully separated, effect.
@@ -410,7 +437,7 @@ coefficient. Positive = a model's own provider credits it more leniently.
 
 Fixed-effects model: shared same-provider coefficient +0.35 log-odds (95% CI [+0.16, +0.56]);
 GPT-5.5-specific +0.52 (95% CI [−0.10, +1.35]); other-subject +0.30 (95% CI [+0.10, +0.56]);
-permutation p = 0.06. (Grok dropped 2/200 items to a provider-side bio-safety moderation block;
+permutation p = 0.04. (Grok dropped 2/200 items to a provider-side bio-safety moderation block;
 those items are excluded from its denominator.)
 
 **The ordering is evaluator-dependent (sensitivity analysis).** Scoring each model only with the
@@ -445,7 +472,18 @@ versus the leave-own-provider-out sensitivity analysis, by subject model (n = 50
 **Figure 2.** Raw same-provider gap (own-provider judge minus mean of the other three) by
 provider. The severity-adjusted effects (Table 5) are smaller.
 
-### 3.4 LLM judges are more permissive than clinicians
+**The instability is specifically the sole-own-judge, not judge removal in general.** A
+leave-one-judge-out analysis over the full panel (each subject's inappropriate-confident rate
+recomputed after dropping each single judge) is more discriminating than the same-provider
+exclusion alone: under *every* single-judge deletion the panel ranking is identical — Opus 4.8
+(0.07–0.08) < Grok 4.3 (0.21–0.25) < GPT-5.5 (0.23–0.30) < Gemini 3.5 Flash (0.28–0.33). A
+prompt-clustered bootstrap (5000 reps, all four judges) puts Opus as the best abstainer in
+**100%** of resamples and Gemini as the worst in **87%**. So the panel-based ordering is stable
+to dropping any one judge; what is *not* stable is scoring GPT-5.5 with itself as the sole judge,
+which alone moves it from third to second. The evaluator-dependence is a specific same-family-judge
+artifact, not general judge fragility.
+
+### 3.4 LLM judges are more permissive than clinicians — and more judges is not more valid
 
 Panel agreement establishes reliability, not validity: four LLM judges could agree and still be
 wrong relative to a human. Two independent clinicians (O, G; co-primary) and the author (R1)
@@ -469,7 +507,7 @@ Gwet's AC1, each with item-bootstrap 95% CIs.
 | R1 (author) ↔ G (clinician) | 0.80 | 0.59 [0.36, 0.80] | 0.62 [0.38, 0.82] |
 | O (clinician) ↔ G (clinician) | 0.74 | 0.47 [0.24, 0.70] | 0.50 [0.25, 0.74] |
 
-**Every LLM judge is more permissive than the clinicians** (Table 8). Against the stricter
+**Every LLM judge is more permissive than the stricter clinician and the consensus** (Table 8). Against the stricter
 independent clinician O (0.52), all four judges credit appropriate response significantly more
 often (paired differences all positive with CIs excluding zero: +0.14 to +0.32). Against the
 more lenient clinician G (0.70), the gap shrinks and only GPT-5.5 clearly separates (+0.14, CI
@@ -496,17 +534,60 @@ missing-information items (§3.1). We therefore read LLM-judged open-ended safet
 **optimistic relative to the clinician reference**, with the magnitude and generalizability
 requiring external replication — not as universal "upper bounds."
 
+**Which aggregation should an evaluator use? More judges is not more valid.** A natural response
+to unreliable single judges is to pool them, but pooling does not automatically improve *validity*
+against clinicians (Table 9). Against the stricter clinician O, the best-aligned aggregations are
+**a single well-chosen judge (Grok, κ = 0.55) and requiring unanimity (4/4, κ = 0.56)**, both of
+which cut the false-lenient count roughly in half (to 8–9) relative to simple majority (16) or
+GPT-5.5 alone (17). Simple 2/4 majority (κ = 0.30) and the paper's as-run judge GPT-5.5 alone
+(κ = 0.26) are the *worst* aligned. So a cross-provider panel buys reliability (§3.3) but a naive
+majority does not buy clinician validity; if a panel is used, a conservative rule (unanimity, or
+excluding the subject's own provider) aligns better than majority vote.
+
+**Table 9.** Judge-aggregation agreement with each independent clinician on the 50-item subsample.
+FL = false-lenient (judge appropriate, clinician inappropriate); FS = false-strict. O is the
+stricter clinician.
+
+| aggregation | vs O: κ / balAcc / FL / FS | vs G: κ / balAcc / FL / FS |
+|---|---|---|
+| GPT-5.5 alone (as-run judge) | 0.26 / 0.63 / 17 / 1 | 0.40 / 0.67 / 9 / 2 |
+| Opus 4.8 alone | 0.26 / 0.63 / 16 / 2 | 0.42 / 0.69 / 8 / 3 |
+| Grok 4.3 alone | **0.55** / 0.77 / 9 / 2 | 0.45 / 0.73 / 5 / 7 |
+| Gemini 3.5 Flash alone | 0.43 / 0.71 / 12 / 2 | 0.27 / 0.63 / 8 / 7 |
+| majority ≥ 2/4 | 0.30 / 0.65 / 16 / 1 | 0.35 / 0.66 / 9 / 3 |
+| supermajority ≥ 3/4 | 0.39 / 0.69 / 12 / 3 | 0.33 / 0.67 / 7 / 7 |
+| unanimity 4/4 | **0.56** / 0.78 / 8 / 3 | 0.38 / 0.70 / 5 / 9 |
+| provider-excluded majority | 0.39 / 0.69 / 12 / 3 | 0.33 / 0.67 / 7 / 7 |
+
+**Even unanimous LLM judges do not guarantee clinician agreement.** Reading the panel vote count
+as a confidence signal (Table 10): on the 31 items where **all four** judges called the response
+appropriate, the stricter clinician O agreed on only **74%** (G 84%, consensus 71%) — so roughly
+one in four unanimously "appropriate" items is judged over-confident by a clinician. When judges
+split (2/4 or 3/4), clinician-appropriate rates fall to 0.00–0.33. Unanimity is the most
+informative panel signal but is still not a clinician guarantee.
+
+**Table 10.** Panel-vote-count calibration (items with all four judges present). Proportion of
+items each clinician rated appropriate, by how many judges called it appropriate.
+
+| # judges appropriate | n items | O appropriate | G appropriate | consensus appropriate |
+|---|---|---|---|---|
+| 0/4 | 6 | 0.00 | 0.00 | 0.00 |
+| 1/4 | 3 | 0.33 | 1.00 | 0.67 |
+| 2/4 | 6 | 0.33 | 0.67 | 0.33 |
+| 3/4 | 4 | 0.00 | 0.50 | 0.25 |
+| 4/4 | 31 | 0.74 | 0.84 | 0.71 |
+
 ### 3.5 Closed-ended anchor (MedQA): accuracy is high; the safety gap is calibration, not knowledge
 
 MedQA accuracy is high and, tested paired on the same 100 items, option shuffling has no
-detectable effect for three of four models (Table 9). No McNemar test is significant, and the
+detectable effect for three of four models (Table 11). No McNemar test is significant, and the
 paired Δacc CI lies within the prespecified ±5-point equivalence margin for Opus, Grok, and
 Gemini. GPT-5.5 is the exception: shuffling *helped* it by 4 points (0 vs 4 discordant pairs;
 paired CI [−0.08, −0.01]), so we cannot declare option-order equivalence for GPT-5.5 — an honest
 non-equivalence in the safe direction, not a robustness failure. We therefore state an
 equivalence result for three models rather than that positional bias is "solved."
 
-**Table 9.** Paired MedQA none-vs-shuffle (n = 100, same items). b = correct-none/wrong-shuffle;
+**Table 11.** Paired MedQA none-vs-shuffle (n = 100, same items). b = correct-none/wrong-shuffle;
 c = wrong-none/correct-shuffle. Equivalence tested against a prespecified ±0.05 margin.
 
 | Model | acc(none) | acc(shuffle) | Δacc | b | c | McNemar exact p | paired 95% CI | equivalent at ±5pp? |
@@ -519,10 +600,10 @@ c = wrong-none/correct-shuffle. Equivalence tested against a prespecified ±0.05
 The same accuracy-vs-abstention dissociation seen in open-ended conversation appears here: when
 the correct option is removed or the context stripped — despite a prompt explicitly inviting
 abstention — every model still picks a concrete wrong option a non-trivial fraction of the time
-(Table 10). Intervals overlap across the three flagships, so we claim the *level*, not a ranking:
+(Table 12). Intervals overlap across the three flagships, so we claim the *level*, not a ranking:
 the best models fail to abstain on roughly one in ten such items, the worst on roughly one in five.
 
-**Table 10.** Inappropriate-confident-answer rate on MedQA under answer-removal and
+**Table 12.** Inappropriate-confident-answer rate on MedQA under answer-removal and
 context-removal, Wilson 95% CIs (n = 100). Integer counts in Table B1.
 
 | Model | answer removed [95% CI] | context removed [95% CI] |
@@ -587,6 +668,12 @@ separating the models from one another:
   and the consensus, all four judges are significantly lenient; against the most lenient clinician
   the effect is weaker. This is a calibration caution on the absolute level of any LLM-judged
   open-ended safety metric.
+- **More judges is not more valid.** Pooling judges into a cross-provider panel buys reliability
+  but not clinician validity: a naive 2/4 majority aligns with the stricter clinician no better
+  than the worst single judge (κ ≈ 0.30), whereas a conservative rule — unanimity, or the best
+  single judge — roughly halves false-lenient errors (§3.4). And even unanimous LLM agreement left
+  the stricter clinician disagreeing on ~1 in 4 items. Reliability, calibration, and clinician
+  validity are distinct properties, and improving one does not improve the others for free.
 
 ### 4.1 Per-model comparison: what the intervals will and will not support
 
@@ -597,13 +684,47 @@ own-provider judges, the spread runs from ≈0.08 (Opus) to ≈0.30–0.33 (GPT-
 points to **Opus over-committing least and Gemini 3.5 Flash most** — with two caveats: this rests
 on n = 50 scored by LLM judges that the human panel shows are uniformly lenient (so absolute
 rates are optimistic even where the ordering holds), and Gemini is a *Flash*-tier model (§2.1), so
-its last-place finish is partly a tier effect. The two measurement findings above are firmer than
-any subject-model ranking.
+its last-place finish is partly a tier effect. That said, the Opus-best / Gemini-worst endpoints
+are the stable ones: a prompt-clustered bootstrap over the full panel puts Opus first in 100% of
+resamples and Gemini last in 87%, and the panel ranking does not move when any single judge is
+dropped (§3.3) — only using GPT-5.5 as the sole judge disturbs it. The two measurement findings
+above remain firmer than any subject-model ranking.
 
 Practically, this argues for (a) missing-information / abstention-aware evaluation as a standard
 companion to accuracy leaderboards, (b) cross-provider judging with same-provider exclusion and
 periodic clinician calibration whenever safety is LLM-graded, and (c) deployment guardrails that
 detect missing-information regimes rather than trusting the model to self-flag.
+
+### 4.2 Interpreting the findings: four framing points
+
+**Three kinds of "missing information" are not equivalent.** Gu et al. [1] remove a *modality*
+(an image); we remove either the tail of a message (an *interruption*, often mid-word) or, in the
+fluent-but-underdetermined cases, a necessary *clinical variable*. These differ in how salient the
+absence is: a mid-word cut is obvious, a missing image is obvious, but a grammatically complete
+question missing a key variable is the hardest and most clinically realistic case. Our validity
+audit (§3.1) shows behavior and judge agreement both differ across these, and the fluent-latent
+case is the one future work should target with variable-level deletion.
+
+**Same-provider preference is confounded with exact-model pairing.** With one subject and one
+judge per provider, provider family, exact model identity, and response style cannot be fully
+separated: GPT-5.5-as-judge favoring GPT-5.5-as-subject could be provider loyalty or simply
+familiarity with its own output style. Our fixed-effects model removes general judge leniency but
+cannot establish a provider-*family* effect; the mechanism (identity vs style) is unresolved and
+matters for whether "use a different provider's judge" or "use a style-diverse panel" is the right
+mitigation.
+
+**Clinician disagreement may be legitimate policy variation, not noise.** Clinician O rated
+appropriate uncertainty at 0.52 and G at 0.70. That gap need not be annotator error: it can encode
+two defensible philosophies — *clarify before advising* versus *give conditional safety
+information while acknowledging uncertainty*. If so, the "correct" endpoint is partly a normative
+policy choice, and a benchmark should make that policy explicit rather than assume a single ground
+truth.
+
+**Reliability, calibration, and validity are separate axes.** A panel can be internally reliable
+yet clinically invalid; clinicians can disagree yet reveal a meaningful threshold difference. Our
+results separate these: the panel is reliable (§3.3), miscalibrated against clinicians (§3.4), and
+its validity depends on the aggregation rule (§3.4). Evaluations should report all three, not
+collapse them into a single "the judge agrees with humans" number.
 
 ## 5. Limitations
 
@@ -664,9 +785,11 @@ completions (no re-sampling), and the supplementary checks use an error-free-onl
 and would masquerade as a confident-answer failure). The added analyses of this revision are
 released as scripts: severity-adjusted same-provider preference (`self_preference_adjusted.py`),
 paired/equivalence MedQA (`paired_medqa_stats.py`), strengthened human reference
-(`human_reference_strengthened.py`), and the perturbation-validity audit (`perturbation_validity.py`
-over `perturbation_audit.csv`). Per-item prompts, completions, rewards, and judge feedback are
-released so every rate and interval can be recomputed.
+(`human_reference_strengthened.py`), the perturbation-validity audit (`perturbation_validity.py`
+over `perturbation_audit.csv`, which covers all 50 probe prompts), and the judge-aggregation,
+calibration, by-stratum, shared-failure, and rank-stability analyses (`evaluator_analyses.py`).
+Per-item prompts, completions, rewards, and judge feedback are released so every rate and interval
+can be recomputed.
 
 ## Appendix A. Sentinels and prompts
 

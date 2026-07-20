@@ -156,12 +156,18 @@ def cluster_bootstrap(recs, gpt_specific, B=2000):
 
 
 def permutation_test(recs, B=2000):
-    """Permute own-judge assignment per subject; refit shared same-provider beta."""
+    """Permute the subject->own-judge labelling as a BIJECTION and refit the shared
+    same-provider beta. Each of the 4 judges is reassigned as the 'own' judge of
+    exactly one subject (a permutation of the 4 judges across the 4 subjects),
+    preserving the one-own-judge-per-subject structure that independent sampling
+    would break."""
+    subs = list(SUBJ_PROVIDER)
     X, y = design(recs)
     obs = fit_logistic(X, y)[7]
     perm = []
     for _ in range(B):
-        ov = {s: JUDGES[rng.integers(4)] for s in SUBJ_PROVIDER}
+        order = rng.permutation(len(JUDGES))
+        ov = {subs[i]: JUDGES[order[i]] for i in range(len(subs))}
         Xp, yp = design(recs, own_override=ov)
         perm.append(fit_logistic(Xp, yp)[7])
     perm = np.array(perm)

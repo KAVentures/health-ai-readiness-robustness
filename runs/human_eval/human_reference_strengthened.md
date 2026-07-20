@@ -1,16 +1,18 @@
 # Strengthened human-reference analysis (50 items, raters R1/O/G)
 
+All bootstrap CIs are **prompt-clustered** (resampling the 33 unique perturbed prompts underlying the 50 annotation items), which is more conservative than resampling items independently.
+
 Rater appropriate-uncertainty rates: R1 (author) 0.54, O 0.52, G 0.70. Author-influenced majority consensus 0.54.
 
 ## Pairwise agreement (Cohen's kappa + Gwet's AC1, item-bootstrap 95% CI)
 
 | pair | raw | Cohen kappa [95% CI] | Gwet AC1 [95% CI] |
 |---|---|---|---|
-| R1-O | 0.94 | 0.88 [0.72, 1.00] | 0.88 [0.76, 1.00] |
-| R1-G | 0.80 | 0.59 [0.36, 0.80] | 0.62 [0.38, 0.82] |
-| O-G | 0.74 | 0.47 [0.24, 0.70] | 0.50 [0.25, 0.74] |
+| R1-O | 0.94 | 0.88 [0.71, 1.00] | 0.88 [0.73, 1.00] |
+| R1-G | 0.80 | 0.59 [0.37, 0.79] | 0.62 [0.39, 0.83] |
+| O-G | 0.74 | 0.47 [0.24, 0.68] | 0.50 [0.25, 0.74] |
 
-Fleiss' kappa (3 raters): 0.64 [0.47, 0.80]. Note Gwet's AC1 exceeds kappa for the O-G pair, i.e. the modest O-G kappa is partly a high-prevalence artifact, not raw disagreement.
+Fleiss' kappa (3 raters): 0.64 [0.47, 0.79]. Note Gwet's AC1 exceeds kappa for the O-G pair, i.e. the modest O-G kappa is partly a high-prevalence artifact, not raw disagreement.
 
 ## Judge minus human appropriate-uncertainty rate (same items, paired 95% CI)
 
@@ -18,9 +20,9 @@ Positive = judge credits appropriate uncertainty MORE often than the human refer
 
 | judge | judge rate | vs O | vs G | vs author-consensus |
 |---|---|---|---|---|
-| GPT-5.5 | 0.84 | +0.32 [+0.18, +0.46] | +0.14 [+0.02, +0.26] | +0.30 [+0.16, +0.44] |
-| Opus 4.8 | 0.80 | +0.28 [+0.14, +0.42] | +0.10 [-0.02, +0.22] | +0.26 [+0.10, +0.42] |
-| Grok 4.3 | 0.66 | +0.14 [+0.02, +0.26] | -0.04 [-0.18, +0.10] | +0.12 [-0.02, +0.26] |
-| Gemini 3.5 Flash | 0.72 | +0.20 [+0.06, +0.34] | +0.02 [-0.14, +0.18] | +0.18 [+0.04, +0.32] |
+| GPT-5.5 | 0.84 | +0.32 [+0.18, +0.46] | +0.14 [+0.04, +0.26] | +0.30 [+0.17, +0.44] |
+| Opus 4.8 | 0.80 | +0.28 [+0.13, +0.42] | +0.10 [-0.02, +0.22] | +0.26 [+0.10, +0.41] |
+| Grok 4.3 | 0.66 | +0.14 [+0.02, +0.27] | -0.04 [-0.18, +0.09] | +0.12 [-0.02, +0.27] |
+| Gemini 3.5 Flash | 0.72 | +0.20 [+0.06, +0.35] | +0.02 [-0.13, +0.18] | +0.18 [+0.04, +0.34] |
 
-Every point estimate is positive (all four judges more lenient than both independent clinicians and the consensus); where a paired CI crosses zero the leniency is directional but not individually separable at n=50. The conclusion that judges skew lenient does not depend on the author's labels.
+All four judges are significantly more lenient than the stricter clinician O and than the author-influenced consensus (paired CIs exclude zero). Against the more lenient clinician G the gap shrinks: only GPT-5.5 clearly separates, and Grok is even slightly stricter than G (point estimate -0.04, CI crosses zero). So the leniency conclusion holds firmly against the stricter clinician and the consensus, is weaker against the most lenient clinician, and does not depend on the author's labels.

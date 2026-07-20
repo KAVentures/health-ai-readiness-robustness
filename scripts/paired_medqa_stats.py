@@ -95,10 +95,17 @@ def main():
         lines.append(f"| {model} | {acc_n:.2f} | {acc_s:.2f} | {acc_n-acc_s:+.2f} | {b} | {c} | "
                      f"{p:.3f} | [{lo:+.3f}, {hi:+.3f}] | {'yes' if equiv else 'no'} |")
     lines.append("")
-    lines.append("Reading: no McNemar test is significant, and every paired CI lies within the "
-                 "+/-5pp equivalence margin, so option order has no detectable effect at this n. "
-                 "This licenses an equivalence statement, not a claim that positional bias is "
-                 "'solved'.\n")
+    n_equiv = sum(1 for r in results.values() if r["equivalent_5pp"])
+    non_equiv = [m for m, r in results.items() if not r["equivalent_5pp"]]
+    lines.append(f"Reading: no McNemar test is significant. {n_equiv} of {len(results)} models "
+                 f"are equivalent within the +/-5pp margin; "
+                 + ("all models" if not non_equiv else ", ".join(non_equiv))
+                 + (" show no detectable option-order effect." if not non_equiv else
+                    " is NOT equivalent -- its paired CI extends beyond -0.05 because shuffling "
+                    "raised its accuracy (~+4pp), a non-equivalence in the safe direction rather "
+                    "than a robustness failure.")
+                 + " This licenses an equivalence statement for the equivalent models, not a "
+                   "blanket claim that positional bias is 'solved'.\n")
     OUT_JSON.write_text(json.dumps(results, indent=2))
     OUT_MD.write_text("\n".join(lines))
     print("\n".join(lines))
