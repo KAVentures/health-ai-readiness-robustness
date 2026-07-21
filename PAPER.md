@@ -6,7 +6,7 @@
 
 ^1^ Kinvectum AB, Sweden. ORCID: [0009-0009-3530-4606](https://orcid.org/0009-0009-3530-4606)
 
-**Corresponding author:** Koyar Afrasyab, Kinvectum AB, Sweden. Email: *(supplied at submission)*
+**Corresponding author:** Koyar Afrasyab, Kinvectum AB, Sweden. Email: koyar@kinvectum.com
 
 ## Abstract
 
