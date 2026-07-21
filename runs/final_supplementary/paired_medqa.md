@@ -1,6 +1,6 @@
 # Paired MedQA none-vs-shuffle (n=100, same items)
 
-Delta_acc = acc(none) - acc(shuffle). b = correct under none but wrong under shuffle; c = wrong under none but correct under shuffle (the discordant pairs McNemar uses). Equivalence tested against a prespecified +/-0.05 margin (TOST via the paired bootstrap CI).
+Delta_acc = acc(none) - acc(shuffle). b = correct under none but wrong under shuffle; c = wrong under none but correct under shuffle (the discordant pairs McNemar uses). This is a POST HOC paired-bootstrap equivalence-region check: a model is called equivalent if its 90% paired-bootstrap CI (TOST-consistent) lies within a +/-5-percentage-point margin. The displayed interval is the 95% CI.
 
 | model | acc(none) | acc(shuffle) | Delta_acc | b | c | McNemar exact p | paired 95% CI | equivalent at +/-5pp? |
 |---|---|---|---|---|---|---|---|---|

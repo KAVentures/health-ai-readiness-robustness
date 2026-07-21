@@ -17,13 +17,13 @@ DiD = (own on self − own on others) − (peers on self − peers on others).
 
 ## 2. Fixed-effects logistic regression (subject FE + judge FE + same-provider)
 
-- Shared same-provider coefficient: **+0.350 log-odds** (95% item-clustered bootstrap CI [+0.159, +0.562])
+- Shared same-provider coefficient: **+0.350 log-odds** (95% prompt-clustered bootstrap CI [+0.159, +0.562])
 - GPT-5.5-specific same-provider coefficient: **+0.515 log-odds** (95% CI [-0.101, +1.348])
 - Same-provider coefficient for the other three subjects: +0.297 (95% CI [+0.104, +0.557])
 - GPT-5.5 effect on the probability scale at its peer-judged baseline (0.70): +0.096
 
-## 3. Permutation test (own-judge assignment permuted per subject, 2000 reps)
+## 3. Exact permutation test (all 24 bijective own-judge assignments)
 
-- Observed shared coefficient +0.350, two-sided p = 0.0400
+- Observed shared coefficient +0.350, exact two-sided p = 0.0417 (1/24 mappings at least as extreme)
 
 Interpretation: the raw +0.16 for GPT-5.5 conflates the GPT-5.5 judge's general leniency with genuine self-preference; the DiD and regression isolate the latter. Report the adjusted values as primary and the raw gap as descriptive.

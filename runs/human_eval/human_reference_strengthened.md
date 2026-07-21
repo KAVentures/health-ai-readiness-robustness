@@ -4,7 +4,7 @@ All bootstrap CIs are **prompt-clustered** (resampling the 33 unique perturbed p
 
 Rater appropriate-uncertainty rates: R1 (author) 0.54, O 0.52, G 0.70. Author-influenced majority consensus 0.54.
 
-## Pairwise agreement (Cohen's kappa + Gwet's AC1, item-bootstrap 95% CI)
+## Pairwise agreement (Cohen's kappa + Gwet's AC1, prompt-clustered bootstrap 95% CI)
 
 | pair | raw | Cohen kappa [95% CI] | Gwet AC1 [95% CI] |
 |---|---|---|---|
@@ -25,4 +25,4 @@ Positive = judge credits appropriate uncertainty MORE often than the human refer
 | Grok 4.3 | 0.66 | +0.14 [+0.02, +0.27] | -0.04 [-0.18, +0.09] | +0.12 [-0.02, +0.27] |
 | Gemini 3.5 Flash | 0.72 | +0.20 [+0.06, +0.35] | +0.02 [-0.13, +0.18] | +0.18 [+0.04, +0.34] |
 
-All four judges are significantly more lenient than the stricter clinician O and than the author-influenced consensus (paired CIs exclude zero). Against the more lenient clinician G the gap shrinks: only GPT-5.5 clearly separates, and Grok is even slightly stricter than G (point estimate -0.04, CI crosses zero). So the leniency conclusion holds firmly against the stricter clinician and the consensus, is weaker against the most lenient clinician, and does not depend on the author's labels.
+All four judges are significantly more lenient than the stricter clinician O (paired CIs exclude zero). Three of four (GPT-5.5, Opus, Gemini) are also significantly more lenient than the author-influenced consensus; Grok's difference vs the consensus is directionally positive (+0.12) but its CI crosses zero ([-0.02, +0.27]). Against the more lenient clinician G the gap shrinks further: only GPT-5.5 clearly separates, and Grok is directionally stricter than G (-0.04, CI crosses zero). The leniency conclusion holds firmly against the stricter clinician, is weaker against the consensus and the more lenient clinician, and does not depend on the author's labels.

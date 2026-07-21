@@ -9,7 +9,8 @@ script pairs by example_id and reports, per model:
   - the 2x2 discordance table (b = correct-none/wrong-shuffle, c = wrong-none/correct-shuffle),
   - the exact McNemar test (binomial on the discordant pairs),
   - a paired bootstrap 95% CI for Delta_acc = acc(none) - acc(shuffle),
-  - a two-one-sided (TOST) equivalence verdict against a prespecified +/-5pp margin.
+  - a post hoc paired-bootstrap equivalence-region verdict: the 90% paired-bootstrap CI
+    (TOST-consistent) lying within a +/-5pp margin.
 
 Reads the per-item results.jsonl from the medmarks working tree (paths pinned below).
 Outputs runs/final_supplementary/paired_medqa.{md,json}.
@@ -66,7 +67,10 @@ def paired_boot(none, shuf, ids, B=10000):
     for _ in range(B):
         idx = rng.integers(0, n, n)
         deltas.append(a[idx].mean() - s[idx].mean())
-    return np.percentile(deltas, [2.5, 97.5])
+    # 95% CI for display; 90% CI for the TOST-style equivalence-region decision
+    ci95 = np.percentile(deltas, [2.5, 97.5])
+    ci90 = np.percentile(deltas, [5, 95])
+    return ci95, ci90
 
 
 def main():
@@ -74,8 +78,9 @@ def main():
     lines = ["# Paired MedQA none-vs-shuffle (n=100, same items)\n"]
     lines.append("Delta_acc = acc(none) - acc(shuffle). b = correct under none but wrong under "
                  "shuffle; c = wrong under none but correct under shuffle (the discordant pairs "
-                 "McNemar uses). Equivalence tested against a prespecified +/-0.05 margin (TOST "
-                 "via the paired bootstrap CI).\n")
+                 "McNemar uses). This is a POST HOC paired-bootstrap equivalence-region check: a "
+                 "model is called equivalent if its 90% paired-bootstrap CI (TOST-consistent) lies "
+                 "within a +/-5-percentage-point margin. The displayed interval is the 95% CI.\n")
     lines.append("| model | acc(none) | acc(shuffle) | Delta_acc | b | c | McNemar exact p | paired 95% CI | equivalent at +/-5pp? |")
     lines.append("|---|---|---|---|---|---|---|---|---|")
     for model, runs in RUNS.items():
@@ -87,11 +92,14 @@ def main():
         b = sum(1 for i in ids if none[i] == 1 and shuf[i] == 0)
         c = sum(1 for i in ids if none[i] == 0 and shuf[i] == 1)
         p = mcnemar_exact(b, c)
-        lo, hi = paired_boot(none, shuf, ids)
-        equiv = (lo > -MARGIN) and (hi < MARGIN)
+        ci95, ci90 = paired_boot(none, shuf, ids)
+        lo, hi = ci95
+        lo90, hi90 = ci90
+        equiv = (lo90 > -MARGIN) and (hi90 < MARGIN)  # TOST-style: 90% CI within margin
         results[model] = dict(n=len(ids), acc_none=float(acc_n), acc_shuffle=float(acc_s),
                               delta=float(acc_n - acc_s), b=b, c=c, mcnemar_p=float(p),
-                              ci95=[float(lo), float(hi)], equivalent_5pp=bool(equiv))
+                              ci95=[float(lo), float(hi)], ci90=[float(lo90), float(hi90)],
+                              equivalent_5pp=bool(equiv))
         lines.append(f"| {model} | {acc_n:.2f} | {acc_s:.2f} | {acc_n-acc_s:+.2f} | {b} | {c} | "
                      f"{p:.3f} | [{lo:+.3f}, {hi:+.3f}] | {'yes' if equiv else 'no'} |")
     lines.append("")

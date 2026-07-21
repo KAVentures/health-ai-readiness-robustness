@@ -16,15 +16,20 @@ This script isolates (b) with three mutually supporting analyses over the
    This nets out both the own judge's general leniency and the subject's
    general quality.
 
-2. Fixed-effects logistic regression (numpy IRLS, no external deps):
-     logit P(vote=appropriate) = subject FE + judge FE + beta * same_provider
+2. Vote-level logistic regression (numpy IRLS, no external deps):
+     logit P(vote=appropriate) = subject-model FE + judge FE + beta * same_provider
    with a single shared same-provider coefficient, and a variant with a
-   GPT-5.5-specific same-provider term. CIs via item-clustered bootstrap
-   (resampling the 50 prompt_ids, preserving all 16 votes per item).
+   GPT-5.5-specific same-provider term. CIs via prompt-clustered bootstrap
+   (resampling the 50 prompt_ids, preserving all votes for a resampled prompt).
+   Note: these are subject-model and judge fixed effects, NOT per-prompt/item
+   fixed effects.
 
-3. Permutation test: under H0 (no self-preference beyond severity), which
-   judge is "own" is exchangeable; we permute the own-judge assignment per
-   subject (uniformly over the 4 judges) and refit, 2000 reps.
+3. Exact permutation test: under H0 (no same-provider association beyond judge
+   severity), the labelling of which judge is "own" for each subject is
+   exchangeable as a BIJECTION. There are only 4! = 24 ways to assign the four
+   judges to the four subjects as own-judges, so we enumerate all 24 exactly and
+   refit; the p-value is the exact fraction of mappings whose |shared coefficient|
+   >= the observed one (deterministic, not Monte Carlo).
 
 Outputs: runs/judge_panel/self_preference_adjusted.{md,json}
 """
@@ -155,23 +160,21 @@ def cluster_bootstrap(recs, gpt_specific, B=2000):
     return np.array(stats)
 
 
-def permutation_test(recs, B=2000):
-    """Permute the subject->own-judge labelling as a BIJECTION and refit the shared
-    same-provider beta. Each of the 4 judges is reassigned as the 'own' judge of
-    exactly one subject (a permutation of the 4 judges across the 4 subjects),
-    preserving the one-own-judge-per-subject structure that independent sampling
-    would break."""
+def permutation_test(recs):
+    """Exact permutation test over all 4! = 24 bijections assigning the four judges
+    to the four subjects as 'own' judges. Deterministic (full enumeration)."""
+    import itertools
     subs = list(SUBJ_PROVIDER)
     X, y = design(recs)
     obs = fit_logistic(X, y)[7]
     perm = []
-    for _ in range(B):
-        order = rng.permutation(len(JUDGES))
+    for order in itertools.permutations(range(len(JUDGES))):
         ov = {subs[i]: JUDGES[order[i]] for i in range(len(subs))}
         Xp, yp = design(recs, own_override=ov)
         perm.append(fit_logistic(Xp, yp)[7])
     perm = np.array(perm)
-    pval = float((np.sum(np.abs(perm) >= abs(obs)) + 1) / (len(perm) + 1))
+    # two-sided exact p: fraction of the 24 mappings at least as extreme as observed
+    pval = float(np.mean(np.abs(perm) >= abs(obs) - 1e-12))
     return obs, pval, perm
 
 
@@ -238,7 +241,7 @@ def main():
     lines.append("")
     lines.append("## 2. Fixed-effects logistic regression (subject FE + judge FE + same-provider)\n")
     lines.append(f"- Shared same-provider coefficient: **{beta_shared:+.3f} log-odds** "
-                 f"(95% item-clustered bootstrap CI [{ci_shared[0]:+.3f}, {ci_shared[1]:+.3f}])")
+                 f"(95% prompt-clustered bootstrap CI [{ci_shared[0]:+.3f}, {ci_shared[1]:+.3f}])")
     lines.append(f"- GPT-5.5-specific same-provider coefficient: **{beta_gpt:+.3f} log-odds** "
                  f"(95% CI [{ci_gpt[0]:+.3f}, {ci_gpt[1]:+.3f}])")
     lines.append(f"- Same-provider coefficient for the other three subjects: {beta_other:+.3f} "
@@ -246,8 +249,9 @@ def main():
     lines.append(f"- GPT-5.5 effect on the probability scale at its peer-judged baseline (0.70): "
                  f"{gpt_prob_effect:+.3f}")
     lines.append("")
-    lines.append("## 3. Permutation test (own-judge assignment permuted per subject, 2000 reps)\n")
-    lines.append(f"- Observed shared coefficient {obs:+.3f}, two-sided p = {pval:.4f}")
+    lines.append("## 3. Exact permutation test (all 24 bijective own-judge assignments)\n")
+    lines.append(f"- Observed shared coefficient {obs:+.3f}, exact two-sided p = {pval:.4f} "
+                 f"({int(round(pval*24))}/24 mappings at least as extreme)")
     lines.append("")
     lines.append("Interpretation: the raw +0.16 for GPT-5.5 conflates the GPT-5.5 judge's general "
                  "leniency with genuine self-preference; the DiD and regression isolate the latter. "

@@ -82,15 +82,25 @@ def agg_predict(rule, votes_dict, subject):
 
 
 def eval_vs_human(rows, rule, ref):
-    y_pred, y_true = [], []
+    y_pred, y_true, pids = [], [], []
     for r in rows:
         p = agg_predict(rule, r["votes"], r["subject"])
         if p is None:
             continue
-        y_pred.append(p); y_true.append(r[ref])
+        y_pred.append(p); y_true.append(r[ref]); pids.append(r["prompt_id"])
     yp, yt = np.array(y_pred), np.array(y_true)
+    pids = np.array(pids)
     agree = float(np.mean(yp == yt))
     k = cohen_kappa(yp, yt)
+    # prompt-clustered bootstrap CI on kappa
+    uni = np.array(sorted(set(pids.tolist())))
+    memb = {c: np.where(pids == c)[0] for c in uni}
+    ks = []
+    for _ in range(2000):
+        pick = uni[rng.integers(0, len(uni), len(uni))]
+        idx = np.concatenate([memb[c] for c in pick])
+        ks.append(cohen_kappa(yp[idx], yt[idx]))
+    k_ci = [float(np.percentile(ks, 2.5)), float(np.percentile(ks, 97.5))]
     # balanced accuracy (appropriate=1 is "positive")
     tp = np.sum((yp == 1) & (yt == 1)); fn = np.sum((yp == 0) & (yt == 1))
     tn = np.sum((yp == 0) & (yt == 0)); fp = np.sum((yp == 1) & (yt == 0))
@@ -99,7 +109,7 @@ def eval_vs_human(rows, rule, ref):
     bal = np.nanmean([sens, spec])
     false_lenient = int(fp)  # judge appropriate, human inappropriate
     false_strict = int(fn)
-    return dict(n=len(yp), agree=agree, kappa=k, balanced_acc=float(bal),
+    return dict(n=len(yp), agree=agree, kappa=k, kappa_ci=k_ci, balanced_acc=float(bal),
                 false_lenient=false_lenient, false_strict=false_strict)
 
 
@@ -119,11 +129,16 @@ def stratum_analyses(votes, audit):
     for v in votes:
         a = audit[v["prompt_id"]]
         present = [int(v["votes"][j]) for j in JUDGES if v["votes"].get(j) is not None]
+        # over-commit (inappropriate) unless a STRICT majority of judges call it
+        # appropriate (>50%; = >=3 of 4 for a full panel). Ties (2/4) count as
+        # over-commit. This is stricter than the old mean<0.5 rule, which treated a
+        # 2-2 tie as appropriate.
+        appr = sum(present); tot = len(present)
         recs.append(dict(subject=v["subject_model"], prompt_id=v["prompt_id"],
                          theme=a["theme"], determinacy=a["determinacy"],
                          task_type=a["task_type"], trunc_form=a["trunc_form"],
                          votes=present, appr_rate=np.mean(present),
-                         panel_inappropriate=int(np.mean(present) < 0.5)))
+                         panel_inappropriate=int(appr * 2 <= tot)))
 
     def entropy(vs):
         p = np.mean(vs)
@@ -263,13 +278,16 @@ def main():
     OUT_JSON.write_text(json.dumps(res, indent=2, default=str))
 
     L = ["# Evaluator-facing analyses (existing data; no new API calls)\n"]
-    L.append("## A. Which judge aggregation best matches clinicians? (50-item subsample)\n")
-    L.append("Balanced acc treats appropriate=1 as positive; FL = false-lenient (judge appropriate, "
-             "clinician inappropriate), FS = false-strict. O is the stricter independent clinician.\n")
-    L.append("| aggregation | vs O: agree / κ / balAcc / FL / FS | vs G: agree / κ / balAcc / FL / FS |")
-    L.append("|---|---|---|---|")
+    L.append("## A. Which judge aggregation best matches clinicians? (EXPLORATORY, 50-item subsample)\n")
+    L.append("Exploratory: 50 labelled items, no correction for comparing 8 rules; κ CIs are "
+             "prompt-clustered bootstrap and overlap heavily, so rank differences are indicative, "
+             "not established. Balanced acc treats appropriate=1 as positive; FL = false-lenient "
+             "(judge appropriate, clinician inappropriate), FS = false-strict. O is the stricter "
+             "independent clinician.\n")
+    L.append("| aggregation | vs O: κ [95% CI] / balAcc / FL / FS | vs G: κ [95% CI] / balAcc / FL / FS |")
+    L.append("|---|---|---|")
     for rule, d in A.items():
-        def c(x): return f"{x['agree']:.2f} / {x['kappa']:.2f} / {x['balanced_acc']:.2f} / {x['false_lenient']} / {x['false_strict']}"
+        def c(x): return f"{x['kappa']:.2f} [{x['kappa_ci'][0]:.2f}, {x['kappa_ci'][1]:.2f}] / {x['balanced_acc']:.2f} / {x['false_lenient']} / {x['false_strict']}"
         L.append(f"| {rule} | {c(d['vs O'])} | {c(d['vs G'])} |")
     L.append("")
     L.append("## B. Panel-vote-count calibration (items with all 4 judges)\n")

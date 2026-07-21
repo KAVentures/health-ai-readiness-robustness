@@ -190,7 +190,7 @@ def main():
     L.append(f"Rater appropriate-uncertainty rates: R1 (author) {r1.mean():.2f}, "
              f"O {o.mean():.2f}, G {g.mean():.2f}. Author-influenced majority consensus "
              f"{consensus.mean():.2f}.\n")
-    L.append("## Pairwise agreement (Cohen's kappa + Gwet's AC1, item-bootstrap 95% CI)\n")
+    L.append("## Pairwise agreement (Cohen's kappa + Gwet's AC1, prompt-clustered bootstrap 95% CI)\n")
     L.append("| pair | raw | Cohen kappa [95% CI] | Gwet AC1 [95% CI] |")
     L.append("|---|---|---|---|")
     for name, d in res["pairwise"].items():
@@ -213,13 +213,15 @@ def main():
         L.append(f"| {jn} | {e['judge_rate']:.2f} | {cell(e['O'])} | {cell(e['G'])} | "
                  f"{cell(e['consensus_author_infl'])} |")
     L.append("")
-    L.append("All four judges are significantly more lenient than the stricter clinician O and "
-             "than the author-influenced consensus (paired CIs exclude zero). Against the more "
-             "lenient clinician G the gap shrinks: only GPT-5.5 clearly separates, and Grok is "
-             "even slightly stricter than G (point estimate -0.04, CI crosses zero). So the "
-             "leniency conclusion holds firmly against the stricter clinician and the consensus, "
-             "is weaker against the most lenient clinician, and does not depend on the author's "
-             "labels.\n")
+    L.append("All four judges are significantly more lenient than the stricter clinician O "
+             "(paired CIs exclude zero). Three of four (GPT-5.5, Opus, Gemini) are also "
+             "significantly more lenient than the author-influenced consensus; Grok's difference "
+             "vs the consensus is directionally positive (+0.12) but its CI crosses zero "
+             "([-0.02, +0.27]). Against the more lenient clinician G the gap shrinks further: only "
+             "GPT-5.5 clearly separates, and Grok is directionally stricter than G (-0.04, CI "
+             "crosses zero). The leniency conclusion holds firmly against the stricter clinician, "
+             "is weaker against the consensus and the more lenient clinician, and does not depend "
+             "on the author's labels.\n")
     OUT_MD.write_text("\n".join(L))
     print("\n".join(L))
 
