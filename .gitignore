@@ -19,3 +19,5 @@ venv/
 # Raw eval dumps (regenerate with the scripts; curated results live in runs/)
 environments/*/outputs/
 outputs/
+arxiv-submission.tar.gz
+arxiv/main.pdf
