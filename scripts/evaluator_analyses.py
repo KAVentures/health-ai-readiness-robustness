@@ -260,7 +260,11 @@ def main():
     RULES = ["openai", "anthropic", "xai", "google",
              "majority>=2/4", "supermajority>=3/4", "unanimity 4/4", "provider-excluded majority"]
     RULE_LABEL = {"openai": "GPT-5.5 alone", "anthropic": "Opus 4.8 alone",
-                  "xai": "Grok 4.3 alone", "google": "Gemini 3.5 Flash alone"}
+                  "xai": "Grok 4.3 alone", "google": "Gemini 3.5 Flash alone",
+                  "majority>=2/4": "tie-positive (>=2/4; ties=appropriate)",
+                  "supermajority>=3/4": "supermajority >=3/4",
+                  "unanimity 4/4": "unanimity 4/4",
+                  "provider-excluded majority": "provider-excluded majority"}
     A = {}
     for rule in RULES:
         A[RULE_LABEL.get(rule, rule)] = {"vs O": eval_vs_human(rows, rule, "O"),

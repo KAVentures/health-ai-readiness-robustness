@@ -104,7 +104,7 @@
         "false_strict": 7
       }
     },
-    "majority>=2/4": {
+    "tie-positive (>=2/4; ties=appropriate)": {
       "vs O": {
         "n": 50,
         "agree": 0.66,
@@ -130,7 +130,7 @@
         "false_strict": 3
       }
     },
-    "supermajority>=3/4": {
+    "supermajority >=3/4": {
       "vs O": {
         "n": 50,
         "agree": 0.7,

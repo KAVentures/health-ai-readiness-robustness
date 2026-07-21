@@ -61,11 +61,13 @@ Extending to open-ended text forces a second problem to the surface. Unlike a mu
 key, "appropriate response to missing information" is not deterministically checkable; it is
 scored by an *LLM judge*. We therefore treat the evaluator as part of the experiment and show
 it is confounded in two ways that can silently change safety conclusions. First,
-**judge choice changes apparent safety**: judges disagree at only moderate reliability, and
-scoring a model with a sibling from its own provider inflates its apparent safety — enough to
-change which model appears to over-commit least. Crucially, we separate this same-provider
-effect from a judge's *general* leniency, because the two are easily conflated. Second,
-**LLM judges are systematically more permissive than clinicians**, so LLM-judged safety rates
+**judge choice changes apparent safety**: judges disagree at only moderate reliability, and in
+this panel same-provider scoring was associated with higher ratings overall and materially
+affected one model's apparent standing — enough to change which model appears to over-commit
+least. Crucially, we separate this same-provider association from a judge's *general* leniency,
+because the two are easily conflated. Second,
+**LLM judges are more permissive than the stricter clinician** (and, for most judges, the
+consensus), so LLM-judged safety rates
 in this setting are optimistic relative to a human reference.
 
 **Contributions.**
@@ -327,9 +329,10 @@ reflect an obvious broken-message cue rather than clinical realism (§4.2).
 
 **Table 2.** Perturbation-validity sensitivity analysis (50-item annotation level). Judge
 inappropriate = 1 − mean panel appropriate-response rate; consensus/O/G = human
-appropriate-response rates; last column = judge minus author-influenced consensus.
+appropriate-response rates; last column = panel appropriate-response rate minus consensus
+appropriate rate (the permissiveness gap; = 1 − "judge inappropriate" − consensus).
 
-| stratum | n | judge inappropriate | consensus | O | G | judge − consensus |
+| stratum | n | judge inappropriate | consensus | O | G | panel appropriate − consensus |
 |---|---|---|---|---|---|---|
 | all items | 50 | 0.24 | 0.54 | 0.52 | 0.70 | +0.21 |
 | **author-audited: clinical & underdetermined** | 28 | 0.21 | 0.50 | 0.46 | 0.68 | **+0.29** |
@@ -395,8 +398,8 @@ not one or the other alone.
 ### 3.3 Judge choice changes apparent safety
 
 The four-provider panel (200 completions, identical inputs) shows the open-ended metric is
-moderately — not highly — reliable, and that one judge favors its own provider once general
-severity is accounted for.
+moderately — not highly — reliable, with a positive aggregate same-provider association after
+adjustment for general judge severity.
 
 **Reliability.** Fleiss' κ = **0.65** over the 198 items rated by all four judges (mean pairwise
 agreement 0.88) — "substantial," but far from interchangeable; the choice of judge moves a
@@ -489,7 +492,7 @@ to dropping any one judge; what is *not* stable is scoring GPT-5.5 with itself a
 which alone moves it from third to second. The evaluator-dependence is a specific same-family-judge
 artifact, not general judge fragility.
 
-### 3.4 LLM judges are more permissive than clinicians — and more judges is not more valid
+### 3.4 LLM judges are more permissive than the stricter clinician — and more judges is not more valid
 
 Panel agreement establishes reliability, not validity: four LLM judges could agree and still be
 wrong relative to a human. Two independent clinicians (O, G; co-primary) and the author (R1)
@@ -497,7 +500,7 @@ independently labeled the blinded 50-item subsample against the same criterion, 
 packets with model identity and all machine verdicts hidden.
 
 **The raters agree substantially, but unevenly** (Table 7). Fleiss' κ across all three = 0.64
-(95% CI [0.47, 0.80]). The author (R1) and clinician O agree on 47/50 (κ = 0.88), while the two
+(95% CI [0.47, 0.79]). The author (R1) and clinician O agree on 47/50 (κ = 0.88), while the two
 *independent* clinicians agree only moderately (O↔G κ = 0.47); Gwet's AC1 exceeds κ for O↔G
 (0.50), so that modest κ is partly a high-prevalence artifact rather than raw disagreement. The
 raters' own appropriate-response rates were R1 = 0.54, O = 0.52, G = 0.70. Because R1 and O
@@ -509,9 +512,9 @@ Gwet's AC1, each with prompt-clustered bootstrap 95% CIs.
 
 | rater pair | raw | Cohen κ [95% CI] | Gwet AC1 [95% CI] |
 |---|---|---|---|
-| R1 (author) ↔ O (clinician) | 0.94 | 0.88 [0.72, 1.00] | 0.88 [0.76, 1.00] |
-| R1 (author) ↔ G (clinician) | 0.80 | 0.59 [0.36, 0.80] | 0.62 [0.38, 0.82] |
-| O (clinician) ↔ G (clinician) | 0.74 | 0.47 [0.24, 0.70] | 0.50 [0.25, 0.74] |
+| R1 (author) ↔ O (clinician) | 0.94 | 0.88 [0.71, 1.00] | 0.88 [0.73, 1.00] |
+| R1 (author) ↔ G (clinician) | 0.80 | 0.59 [0.37, 0.79] | 0.62 [0.39, 0.83] |
+| O (clinician) ↔ G (clinician) | 0.74 | 0.47 [0.24, 0.68] | 0.50 [0.25, 0.74] |
 
 **All four LLM judges are more permissive than the stricter clinician** (Table 8). Against the
 stricter independent clinician O (0.52), all four judges credit appropriate response significantly
@@ -519,7 +522,7 @@ more often (paired differences all positive with CIs excluding zero: +0.14 to +0
 author-influenced consensus (0.54), three of four are significantly more lenient (GPT-5.5, Opus,
 Gemini); **Grok's difference (+0.12) is directionally positive but its CI crosses zero
 ([−0.02, +0.27])**. Against the more lenient clinician G (0.70) the gap shrinks further and only
-GPT-5.5 clearly separates (+0.14, CI [0.02, 0.26]); Grok is directionally stricter than G (−0.04,
+GPT-5.5 clearly separates (+0.14, CI [0.04, 0.26]); Grok is directionally stricter than G (−0.04,
 CI crosses zero). The disagreements are one-directional — judges err lenient far more than strict
 (per-judge confusion counts in Appendix C: false-lenient/false-strict GPT-5.5 16/1, Opus 16/3,
 Gemini 12/3, Grok 10/4). So the leniency conclusion is robust against the stricter clinician,
@@ -532,10 +535,10 @@ and does not depend on the author's labels.
 
 | judge | judge rate | vs O | vs G | vs consensus (secondary) |
 |---|---|---|---|---|
-| GPT-5.5 | 0.84 | +0.32 [+0.18, +0.46] | +0.14 [+0.02, +0.26] | +0.30 [+0.16, +0.44] |
-| Opus 4.8 | 0.80 | +0.28 [+0.14, +0.42] | +0.10 [−0.02, +0.22] | +0.26 [+0.10, +0.42] |
-| Grok 4.3 | 0.66 | +0.14 [+0.02, +0.26] | −0.04 [−0.18, +0.10] | +0.12 [−0.02, +0.26] |
-| Gemini 3.5 Flash | 0.72 | +0.20 [+0.06, +0.34] | +0.02 [−0.14, +0.18] | +0.18 [+0.04, +0.32] |
+| GPT-5.5 | 0.84 | +0.32 [+0.18, +0.46] | +0.14 [+0.04, +0.26] | +0.30 [+0.17, +0.44] |
+| Opus 4.8 | 0.80 | +0.28 [+0.13, +0.42] | +0.10 [−0.02, +0.22] | +0.26 [+0.10, +0.41] |
+| Grok 4.3 | 0.66 | +0.14 [+0.02, +0.27] | −0.04 [−0.18, +0.09] | +0.12 [−0.02, +0.27] |
+| Gemini 3.5 Flash | 0.72 | +0.20 [+0.06, +0.35] | +0.02 [−0.13, +0.18] | +0.18 [+0.04, +0.34] |
 
 The implication: in this 50-item subsample the LLM judges produced systematically more permissive
 estimates of appropriate uncertainty than the clinician raters, concentrated on the author-audited
@@ -549,10 +552,10 @@ the κ confidence intervals overlap heavily, so what follows is a point-estimate
 established ranking. Pooling judges did not improve *point-estimate* agreement with clinicians
 (Table 9): against the stricter clinician O, the highest point estimates came from **a single
 judge (Grok, κ = 0.55 [0.30, 0.77]) and from requiring unanimity (4/4, κ = 0.56 [0.27, 0.79])**,
-each roughly halving the false-lenient count (to 8–9) relative to simple 2/4 majority (16) or
-GPT-5.5 alone (17); the 2/4 majority (κ = 0.30 [0.08, 0.48]) and GPT-5.5 alone (κ = 0.26
+each roughly halving the false-lenient count (to 8–9) relative to the tie-positive rule (≥2/4, counting 2-2 ties as appropriate; 16) or
+GPT-5.5 alone (17); the tie-positive rule (κ = 0.30 [0.08, 0.48]) and GPT-5.5 alone (κ = 0.26
 [0.04, 0.45]) were the lowest. Directionally, then, a cross-provider panel buys reliability (§3.3)
-but a *naive majority* did not buy clinician validity in this sample; a conservative rule
+but a tie-positive aggregation (2-2 ties scored appropriate) did not buy clinician validity in this sample; a conservative rule
 (unanimity, or excluding the subject's own provider) looked better than majority vote — a
 hypothesis for larger-sample confirmation, not a settled result.
 
@@ -566,7 +569,7 @@ clinician inappropriate); FS = false-strict. O is the stricter clinician.
 | Opus 4.8 alone | 0.26 [0.04, 0.46] / 16 / 2 | 0.42 [0.12, 0.66] / 8 / 3 |
 | Grok 4.3 alone | 0.55 [0.30, 0.77] / 9 / 2 | 0.45 [0.19, 0.65] / 5 / 7 |
 | Gemini 3.5 Flash alone | 0.43 [0.13, 0.66] / 12 / 2 | 0.27 [−0.02, 0.47] / 8 / 7 |
-| majority ≥ 2/4 | 0.30 [0.08, 0.48] / 16 / 1 | 0.35 [0.07, 0.60] / 9 / 3 |
+| tie-positive (≥2/4; ties=appropriate) | 0.30 [0.08, 0.48] / 16 / 1 | 0.35 [0.07, 0.60] / 9 / 3 |
 | supermajority ≥ 3/4 | 0.39 [0.07, 0.63] / 12 / 3 | 0.33 [0.04, 0.55] / 7 / 7 |
 | unanimity 4/4 | 0.56 [0.27, 0.79] / 8 / 3 | 0.38 [0.14, 0.58] / 5 / 9 |
 | provider-excluded majority | 0.39 [0.08, 0.63] / 12 / 3 | 0.33 [0.06, 0.54] / 7 / 7 |
@@ -651,7 +654,7 @@ differences — the single-rollout rates are stable.
 Across task families the same dissociation appears: near-ceiling accuracy coexists with imperfect
 handling of missing information. But in the open-ended setting the *measured* safety — and the
 apparent model ordering — depends materially on how the evaluator is chosen (Fleiss' κ = 0.65; a
-same-provider preference that shifts the ordering) and is systematically more permissive than a
+same-provider association that shifts the ordering) and is more permissive than the stricter
 clinician reference. The clinically relevant failure mode is over-committing when the information
 needed to answer safely is absent; the evaluator is part of whether we can even see it.
 
@@ -685,7 +688,7 @@ separating the models from one another:
   against the most lenient clinician the effect is weaker still. This is a calibration caution on
   the absolute level of any LLM-judged open-ended safety metric.
 - **More judges is not more valid.** Pooling judges into a cross-provider panel buys reliability
-  but not clinician validity: a naive 2/4 majority aligns with the stricter clinician no better
+  but not clinician validity: a tie-positive rule (≥2/4, 2-2 ties scored appropriate) aligns with the stricter clinician no better
   than the worst single judge (κ ≈ 0.30), whereas a conservative rule — unanimity, or the best
   single judge — roughly halves false-lenient errors (§3.4). And even unanimous LLM agreement left
   the stricter clinician disagreeing on ~1 in 4 items. Reliability, calibration, and clinician
@@ -754,8 +757,9 @@ We list these prominently because they bound every claim above.
    validation on a prespecified subset is the most valuable scale-up and is not done here. Most
    pairwise model differences are not statistically distinguishable.
 2. **LLM-judge dependence and validity.** The open-ended metric is judge-defined. We addressed
-   *reliability* (Fleiss' κ = 0.65) and *same-provider preference* (adjusted for severity; real
-   but modest and, for GPT-5.5, not individually significant at n = 50). *Validity* against
+   *reliability* (Fleiss' κ = 0.65) and a *same-provider association* (adjusted for severity;
+   positive but modest in the aggregate, and not individually significant for GPT-5.5 at n = 50).
+   *Validity* against
    clinicians rests on **50 items in one blinded batch** with only two independent clinicians, so
    all κ carry wide CIs and there is no between-batch replication. Leave-one-provider-out is a
    sensitivity analysis, not a common-scale correction. The strongest ordering claim (own-provider
@@ -972,8 +976,10 @@ author beyond this annotation, no ties to the evaluated providers, and none to K
 human-leniency conclusion holds on the independent clinicians' labels alone (§3.4). The
 majority-vote consensus is author-influenced (author and clinician O agree on 47/50) and is reported
 as a secondary reference. The two clinicians are de-identified by initial at their request;
-identifying details can be provided to editors/reviewers in confidence. A larger panel of clinicians
-with no author participation is the ideal design and the primary follow-up (§5).
+identifying details can be provided to editors/reviewers in confidence. **The clinician annotators
+consented to the research use and public release of their de-identified labels** (each rater's
+label file is released; §3.4). A larger panel of clinicians with no author participation is the
+ideal design and the primary follow-up (§5).
 
 ## Funding
 
@@ -1026,7 +1032,8 @@ HealthBench [11].
 14. Cohen, J. *A Coefficient of Agreement for Nominal Scales.* Educational and Psychological
     Measurement 20(1):37–46, 1960.
 15. Pan, J., Jian, B., Hager, P., Zhang, Y., Liu, C., et al. *Addressing Benchmarking Gaps in Large
-    Language Models for Health and Medicine with Dynamic Red-Teaming.* arXiv:2508.00923, 2025/2026.
+    Language Models for Health and Medicine with Dynamic Red-Teaming.* Nature Health, 2026.
+    doi:10.1038/s44360-026-00152-8. (Preprint arXiv:2508.00923.)
 16. Pombal, J., Rei, R., Martins, A.F.T. *Self-Preference Bias in Rubric-Based Evaluation of Large
     Language Models.* arXiv:2604.06996, 2026.
 17. Philipp, W., et al. *Clinician-Level Agreement Without Clinical Caution: LLM Evaluator Limits in
