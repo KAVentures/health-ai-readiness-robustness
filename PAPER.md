@@ -10,32 +10,27 @@
 
 ## Abstract
 
-Readiness stress-testing of medical AI has so far concentrated on closed-ended and
-multimodal benchmarks. We extend it to **open-ended clinical conversation under missing
-information**, where safe behavior means recognizing that key information is absent and
-qualifying the answer, seeking clarification, or otherwise not over-committing — and where,
-because the endpoint is open-ended, the *evaluator* becomes part of the measurement. We
-stress-test four models — three flagships (Claude Opus 4.8, GPT-5.5, Grok 4.3) and one
-mid-tier model (Gemini 3.5 Flash) — by deleting the latter half of the final user turn in
-HealthBench conversations, and we grade the responses with a four-provider LLM-judge panel
-and a blinded clinician-anchored human reference. Two results are robust and evaluator-facing.
-First, **judge choice materially changes apparent safety.** Inter-judge agreement is only
-moderate (Fleiss' κ = 0.65), and after adjusting for each judge's general leniency (a
-vote-level logistic regression with subject-model and judge fixed effects), a positive
-same-provider association remains (shared effect exact permutation p = 0.04; GPT-5.5 ≈ +0.10 on
-the probability scale), large enough that the apparent ordering of which model over-commits least
-changes when a model's own-provider judge is excluded. Second, **LLM judges are more permissive
-than clinicians** on a blinded 50-item subsample: they credit appropriate uncertainty on 66–84%
-of items versus 52% for the stricter independent clinician and 54% for the (author-influenced,
-secondary) panel consensus. All four judges are significantly more lenient than the stricter
-clinician; three of four are also significantly more lenient than the consensus (Grok's difference
-is directionally positive but its CI crosses zero); against the more lenient clinician only one
-judge separates (judge-vs-consensus κ = 0.20–0.43). On the author-audited clinical-underdetermined
-subset, the judge–clinician permissiveness gap widened and the point-estimate model ordering was
-unchanged. A closed-ended MedQA anchor confirms that accuracy is high and option-order effects are
-within a ±5-point equivalence region for three of four models, so the safety gap is about
-calibration, not knowledge. We release the harness, prompts,
-per-item outputs, the judge panel, the perturbation audit, and the blinded human-annotation
+Readiness stress-testing of medical AI has focused on closed-ended and multimodal
+benchmarks. We extend it to **open-ended clinical conversation under missing information**,
+where safe behavior means recognizing absent information and qualifying,
+clarifying, or not over-committing — and where the *evaluator* becomes part of the
+measurement. We stress-test four models — three flagships (Claude Opus 4.8, GPT-5.5, Grok
+4.3) and one mid-tier model (Gemini 3.5 Flash) — by deleting the latter half of the final
+user turn in HealthBench conversations, grading responses with a four-provider LLM-judge
+panel and a blinded clinician-anchored reference. Two evaluator-facing results are robust.
+First, **judge choice materially changes apparent safety**: inter-judge agreement is only
+moderate (Fleiss' κ = 0.65), and after adjusting for each judge's general leniency
+(vote-level logistic regression), a positive same-provider association remains (exact
+permutation p = 0.04; GPT-5.5 ≈ +0.10 on the probability scale) — large enough to change which model
+appears to over-commit least once its own-provider judge is excluded. Second, **LLM judges are more permissive than clinicians** on a blinded
+50-item subsample: all four are significantly more lenient than the stricter independent
+clinician (crediting appropriate uncertainty on 66–84% of items vs 52%), and three of four
+than the author-influenced consensus (Grok directional only; judge-vs-consensus κ =
+0.20–0.43). On the author-audited clinical-underdetermined subset the permissiveness gap
+widened and the point-estimate model ordering held. A closed-ended MedQA anchor confirms
+accuracy is high and option-order effects are within a ±5-point equivalence region for
+three of four models, so the safety gap is about calibration, not knowledge. We release the
+harness, prompts, per-item outputs, judge panel, perturbation audit, and human-annotation
 protocol.
 
 **Keywords:** medical question answering; large language models; missing-information
