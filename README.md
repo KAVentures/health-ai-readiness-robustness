@@ -5,13 +5,15 @@
 Author: **Koyar Afrasyab, M.D.**
 Affiliation: **Kinvectum AB**
 Funding: **Kinvectum AB**
+Preprint: **[arXiv:2607.18828](https://arxiv.org/abs/2607.18828)**
 
 This repository contains the manuscript, evaluation environments, orchestration/judging/scoring code, saved analysis tables, figures, judge-panel votes, the perturbation-validity audit, and human-annotation data. It extends the input-perturbation methodology of Gu et al., *Evaluating the robustness and readiness of large frontier models in health AI applications* (Nature Medicine 2026; preprint arXiv:2509.18234) from closed-ended/multimodal tasks to **open-ended clinical conversation under missing information**, on top of the [MedARC-AI/medmarks](https://github.com/MedARC-AI/medmarks) harness.
 
-The primary contribution is the open-ended missing-information probe and its **evaluator analysis**: a four-provider LLM-judge panel (with same-provider preference separated from general judge severity), a clinician-anchored validity check (two independent clinicians co-primary, plus the author), and a perturbation-validity audit. Two evaluator-facing findings: **judge choice materially changes apparent safety**, and **LLM judges are more permissive than clinicians**. The closed-ended MedQA/MedMCQA results (with paired/equivalence statistics) anchor that accuracy is high and the safety gap is about calibration, not knowledge.
+The primary contribution is the open-ended missing-information probe and its **evaluator analysis**: a four-provider LLM-judge panel (with the same-provider association separated from general judge severity), a clinician-anchored validity check (two independent clinicians co-primary, plus the author), and a perturbation-validity audit. Two evaluator-facing findings: **judge choice materially changes apparent safety**, and **LLM judges are more permissive than the stricter clinician**. The closed-ended MedQA/MedMCQA results (with paired/equivalence statistics) anchor that accuracy is high and the safety gap is about calibration, not knowledge.
 
 ## Quick Links
 
+- [**Preprint on arXiv (2607.18828)**](https://arxiv.org/abs/2607.18828)
 - [Manuscript (Markdown)](PAPER.md)
 - [Headline results table (MedQA n=100 + HealthBench)](runs/final/final_study.md)
 - [Larger-n MedQA (n=300)](runs/final_supplementary/medqa_n300.md)
@@ -19,13 +21,13 @@ The primary contribution is the open-ended missing-information probe and its **e
 - [Cross-provider judge-panel summary](runs/judge_panel/panel_summary.md)
 - [Human validity — 3 clinicians](runs/human_eval/human_validity_multi.md)
 - [Raw per-item completion dumps (v1.0.0 release)](https://github.com/KAVentures/health-ai-readiness-robustness/releases/tag/v1.0.0)
-- [Original Gu et al. paper (arXiv:2509.18234)](https://arxiv.org/abs/2509.18234)
+- [Gu et al., *Nature Medicine* 2026 (preprint arXiv:2509.18234)](https://arxiv.org/abs/2509.18234)
 
 ## Study Question
 
-The original Health-AI-Readiness study asked whether strong frontier-model performance on medical benchmarks translates into robust, deployment-ready behavior. This study asks a focused, text-modality version:
+Readiness stress-testing of medical AI has concentrated on closed-ended and multimodal benchmarks. This study extends it to **open-ended clinical conversation under missing information** and treats the *evaluator* as part of the measurement:
 
-> When the information needed to answer a medical question is degraded or removed, do frontier models recognize the gap and abstain — or do they answer confidently as if nothing were missing? And can automated (LLM-judge) scoring of that behavior be trusted against clinicians?
+> When key clinical information is removed from an open-ended medical conversation, do frontier models recognize the gap and qualify, clarify, or otherwise avoid over-committing — or do they answer confidently as if nothing were missing? And because that behavior is scored by an LLM judge, does the *choice and calibration* of that judge change the safety conclusion? The closed-ended MedQA/MedMCQA battery is an anchor showing the gap is about calibration, not knowledge.
 
 ## Model Panel
 
@@ -46,7 +48,7 @@ An exploratory Gemini 3.1 Pro run was quota-limited and is retained only as arch
 |---|---:|---|---|
 | MedQA-USMLE | 100 (headline), 300 (supplementary) | 4-option MCQ | option shuffle · correct-answer removal · context removal |
 | MedMCQA | 200 (supplementary) | 4-option MCQ | option shuffle · correct-answer removal · context removal |
-| HealthBench | 50 | open-ended clinical dialogue | final-user-turn context truncation (abstention probe) |
+| HealthBench | 50 | open-ended clinical dialogue | final-user-turn deletion (missing-information probe) |
 
 Removal conditions insert an explicit abstention target ("none of the other answers is correct" / "there is not enough information to answer"); the metric is the **inappropriate-confident rate** = 1 − appropriate-abstention rate.
 
@@ -80,14 +82,14 @@ Under a **same-provider-excluded sensitivity analysis** (leave-one-provider-out)
 
 - **Judge-panel reliability:** four-provider panel Fleiss' κ = **0.649** (198 complete items); judge choice shifts a score by up to ~0.20.
 - **Same-provider association (severity-adjusted):** the raw own-minus-peer gap for GPT-5.5 is +0.16, but that conflates the GPT-5.5 judge's *general* leniency with any preference for its own provider. After separating the two (a vote-level logistic regression with subject-model and judge fixed effects), a positive same-provider association remains — GPT-5.5 ≈ **+0.10** on the probability scale; shared same-provider effect exact permutation **p = 0.04** (over all 24 bijections) — smaller than the raw gap and, for GPT-5.5 alone, not individually significant at n=50. With one subject and one judge per provider, provider identity cannot be separated from exact-model/style familiarity.
-- **Human validity:** a three-rater panel — **two independent clinicians** (co-primary; no ties to the providers or to Kinvectum) plus the **author (a physician)** — labeled the blinded 50-item subsample; inter-rater Fleiss' κ = **0.64** (prompt-clustered CI [0.47, 0.79]). Against the stricter independent clinician (0.52), **all four LLM judges are significantly more lenient** (judges 0.66–0.84; paired CIs exclude zero); three of four are also significantly more lenient than the consensus (0.54), while Grok's difference is directionally positive but its CI crosses zero; against the more lenient clinician (0.70) only GPT-5.5 clearly separates. LLM-judged safety rates here are therefore **more permissive than the clinician reference**, not a universal upper bound. The author's participation is a disclosed conflict of interest and the consensus is author-influenced (author ↔ clinician O agree 47/50); the leniency direction holds on the two independent clinicians alone. See *Ethics* and §3.4.
+- **Human validity:** a three-rater panel — **two independent clinicians** (co-primary; no ties to the providers or to Kinvectum) plus the **author (a physician)** — labeled the blinded 50-item subsample; inter-rater Fleiss' κ = **0.64** (prompt-clustered CI [0.47, 0.79]). Against the stricter independent clinician (0.52), **all four LLM judges are significantly more lenient** (judges 0.66–0.84; paired CIs exclude zero); three of four are also significantly more lenient than the consensus (0.54), while Grok's difference is directionally positive but its CI crosses zero; against the more lenient clinician (0.70) only GPT-5.5 clearly separates. LLM-judged safety rates here are therefore **more permissive than the clinician reference**, not a universal upper bound. The author's participation is a disclosed conflict of interest and the consensus is author-influenced (author ↔ clinician O agree 47/50); the leniency direction holds on the two independent clinicians alone. See *Competing Interests* and §3.4.
 
 ![MCQ failure-to-abstain with Wilson 95% confidence intervals (MedQA, n=100)](runs/final/forest_mcq_abstention.png)
 
 ## Key Conclusions
 
 - **Accuracy ≠ readiness.** Near-ceiling MCQ accuracy (option-shuffle equivalent within ±5pp for three of four models) coexists with imperfect handling of missing information: models over-commit when the information needed to answer safely is absent (MedQA inappropriate-confident 0.08–0.22; HealthBench 0.06–0.28).
-- **Judge choice changes apparent safety.** Inter-judge reliability is only moderate (Fleiss' κ = 0.65), and a same-provider preference survives adjustment for general judge severity (GPT-5.5 ≈ +0.10; shared-effect permutation p = 0.04) — large enough that the apparent open-ended ordering changes when a model's own-provider judge is excluded.
+- **Judge choice changes apparent safety.** Inter-judge reliability is only moderate (Fleiss' κ = 0.65), and a positive same-provider association survives adjustment for general judge severity (GPT-5.5 ≈ +0.10; shared-effect exact permutation p = 0.04) — large enough that the apparent open-ended ordering changes when a model's own-provider judge is excluded.
 - **LLM judges are more permissive than clinicians.** All four judges over-credit appropriate uncertainty relative to the stricter clinician (judges 0.66–0.84 vs 0.52); three of four also relative to the consensus (0.54); against the most lenient clinician (0.70) the effect is weaker. The direction holds on the two independent clinicians' labels alone and on the author-audited clinical-underdetermined items.
 - **More judges is not more valid (exploratory).** In this 50-item sample a tie-positive rule (≥2/4, 2-2 ties scored appropriate) aligned with the stricter clinician no better than the worst single judge (κ ≈ 0.30 point estimate); a conservative rule (unanimity, or the single judge Grok) had the highest point estimates (κ ≈ 0.55) — though the κ CIs overlap heavily, so this is indicative, not established. Even 4/4 unanimous LLM agreement left the stricter clinician disagreeing on ~1 in 4 items. Judge disagreement also concentrates in ill-posed perturbations (unanimity 0.88 on audited clinical-underdetermined items vs 0.56 on administrative).
 - **Perturbations are not portable across benchmarks.** MedMCQA context-removal inappropriate rates jump to 0.86–0.92 — a benchmark artifact (items answerable from the stem alone); a perturbation-validity audit shows the open-ended signal concentrates in genuinely underdetermined clinical items.
@@ -108,7 +110,7 @@ Under a **same-provider-excluded sensitivity analysis** (leave-one-provider-out)
 |---|---|
 | `PAPER.md` | Full manuscript (abstract, methods, results, discussion, limitations, appendices, references) |
 | `environments/medrobust/` | MCQ perturbation environment (shuffle / answer-removal / context-removal) |
-| `environments/healthbench_robust/` | Open-ended context-removal abstention probe |
+| `environments/healthbench_robust/` | Open-ended missing-information probe (final-user-turn deletion) |
 | `scripts/` | Study orchestration, cross-provider judging, human-eval scoring, cost estimation, and figure generation |
 | `configs/study-endpoints.toml` | Endpoint registry (env-var names only; no secrets) |
 | `patches/judge_helpers.patch` | Small patch to upstream medmarks (sampling defaults for the newer model names) |
@@ -160,13 +162,13 @@ See the docstring at the top of each script for its exact arguments and outputs.
 ## Data and Human Labels
 
 - Benchmark items are from public research datasets (MedQA, MedMCQA, HealthBench) — no real patient data.
-- Human labels (`runs/human_eval/`) come from a three-rater panel who each independently labeled the same blinded 50 items: `R1` = the **author** (a physician), and `O`, `G` = **two independent clinicians** with no ties to the evaluated providers or to Kinvectum. Raters are de-identified by initial. The author's participation is a disclosed conflict of interest and the majority consensus is author-influenced (`R1`↔`O` agree 47/50); the paper's leniency conclusion is shown to hold on `O` and `G` alone. See `runs/human_eval/PROVENANCE.md` and the paper's *Ethics* section.
+- Human labels (`runs/human_eval/`) come from a three-rater panel who each independently labeled the same blinded 50 items: `R1` = the **author** (a physician), and `O`, `G` = **two independent clinicians** with no ties to the evaluated providers or to Kinvectum. Raters are de-identified by initial. The author's participation is a disclosed conflict of interest and the majority consensus is author-influenced (`R1`↔`O` agree 47/50); the paper's leniency conclusion is shown to hold on `O` and `G` alone. See `runs/human_eval/PROVENANCE.md`, the paper's *Competing Interests* section, and §3.4. Ethics: the project was assessed by the research principal as falling outside mandatory review under the Swedish Ethical Review Act (2003:460); see [`manuscript/ethics_self_assessment.md`](manuscript/ethics_self_assessment.md).
 
 ## Attribution
 
 This work builds on the methodology and research question of:
 
-- Gu, Y., Fu, J., Liu, X., Valanarasu, J.M.J., Codella, N.C.F., Tan, R., Liu, Q., Jin, Y., Zhang, S., et al. **The Illusion of Readiness in Health AI.** arXiv:2509.18234, 2025.
+- Gu, Y., Fu, J., Liu, X., Valanarasu, J.M.J., Codella, N.C.F., Tan, R., Liu, Q., Jin, Y., Zhang, S., et al. **Evaluating the robustness and readiness of large frontier models in health AI applications.** *Nature Medicine*, 2026. doi:10.1038/s41591-026-04501-8 (preprint: *The Illusion of Readiness in Health AI*, arXiv:2509.18234).
 
 and the evaluation harness:
 
@@ -176,15 +178,17 @@ Benchmark sources: MedQA (Jin et al., 2021), MedMCQA (Pal et al., 2022), and Hea
 
 ## Citation
 
-If you use this work, please cite both this repository and the original Gu et al. study it re-implements.
+If you use this work, please cite the preprint (and, where relevant, the Gu et al. study it builds on).
 
 ```bibtex
-@misc{afrasyab2026missinginfo,
-  title  = {Evaluating Medical AI Under Missing Information: Same-Provider Judges and Human Raters Change Apparent Safety},
-  author = {Afrasyab, Koyar},
-  year   = {2026},
-  howpublished = {GitHub repository},
-  url    = {https://github.com/KAVentures/health-ai-readiness-robustness}
+@article{afrasyab2026missinginfo,
+  title         = {Evaluating Medical AI Under Missing Information: Same-Provider Judges and Human Raters Change Apparent Safety},
+  author        = {Afrasyab, Koyar},
+  year          = {2026},
+  eprint        = {2607.18828},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2607.18828}
 }
 ```
 
